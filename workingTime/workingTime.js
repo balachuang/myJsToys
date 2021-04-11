@@ -3,17 +3,17 @@ const CONST_Y_COUNT = 10;
 const CONST_WEEK_NAME = ['Sun.','Mon.','Tue.','Wed.','Thu.','Fri.','Sat.'];
 
 const CONST_WE_HTML =	'<span class="clock-text">$TimeStr$</span><br>                                    ' +
-						'<span class="ratio-main" style="color:red;">$RatioInt$.$RatioDec$%</span><br>    ' +
-						'<span class="ext-text" style="color:blue;">STOP THE FUCKING CLOCK !!!</span><br> ' +
-						'<span class="ext-text" style="color:black;">You have&nbsp;</span>                ' +
-						'<span class="ext-text" style="color:blue;">&nbsp;$ExtText$&nbsp;</span>          ' +
-						'<span class="ext-text" style="color:black;">&nbsp;left.</span>                   ' ;
+						'<span class="ratio-main" style="color:yellow;">$RatioInt$.$RatioDec$%</span><br>    ' +
+						'<span class="ext-text" style="color:orange;">STOP THE FUCKING CLOCK !!!</span><br> ' +
+						'<span class="ext-text">You have&nbsp;</span>                ' +
+						'<span class="ext-text" style="color:orange;">&nbsp;$ExtText$&nbsp;</span>          ' +
+						'<span class="ext-text">&nbsp;left.</span>                   ' ;
 
 const CONST_WD_HTML =	'<span class="clock-text">$TimeStr$</span><br>                                            ' +
 						'<span class="ratio-main" style="color:$RatioColor1$;">$RatioInt$.$RatioDec$%</span><br>  ' +
-						'<span class="ext-text" style="color:black;">You have to be a dog for&nbsp;</span>        ' +
+						'<span class="ext-text">You have to be a dog for&nbsp;</span>        ' +
 						'<span class="ext-text" style="color:$RatioColor2$;font-size:200%;">$ExtText2$</span>     ' +
-						'<span class="ext-text" style="color:black;">&nbsp;more day.</span>                       ' ;
+						'<span class="ext-text">&nbsp;more day.</span>                       ' ;
 
 window.onload = function()
 {
@@ -111,9 +111,9 @@ function ratioHtml()
 		if (now.getTime() > todayEnd.getTime()) now = todayEnd;
 
 		let ratio_color = 'black';
-		if      (ww < 3) ratio_color = 'red';
-		else if (ww = 3) ratio_color = 'black';
-		else             ratio_color = 'green';
+		if      (ww < 3) ratio_color = 'orange';
+		else if (ww = 3) ratio_color = 'lightgray';
+		else             ratio_color = 'lightgreen';
 
 		let ratio = 100.0 - 100.0 * (now.getTime() - todayStart.getTime() + (ww-1) * 43200000) / (5 * 43200000);
 		let ratio_int = Math.round(ratio);
