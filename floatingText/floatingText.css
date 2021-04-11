@@ -2,13 +2,17 @@ body {
 	background-color: rgb(36, 37, 38);
 }
 
-#timeText {
+#svg-container {
     position: fixed;
+    top: 0px;
+    left: 0px;
+    border: 1px solid white;
+}
+
+#text-area {
     font-family: 'Abril Fatface', cursive;
-    font-size: 50px;
-    color: white;
-    top: 100px;
-    left: 100px;
+    font-size: 30px;
+    fill: white;
 
     -webkit-filter: drop-shadow(6px 6px 4px rgba(139, 139, 139, 0.6));
     filter: drop-shadow(6px 6px 4px rgba(139, 139, 139, 0.6))

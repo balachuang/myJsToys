@@ -1,19 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
-    <script src="floatingText.js"></script>
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="floatingText.css">
-    <script>
-    </script>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
+	<script src="floatingText.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="floatingText.css">
+	<script>
+	</script>
 </head>
 <body>
-    <div id="timeText"></div>
+	<div id="svg-container">
+		<svg id="svg-area" xmlns="http://www.w3.org/2000/svg">
+			<defs>
+				<path id="timeT-text-path" d="M 100 150 C 400 0 700 300 1000 150" stroke="rgba(0,0,0,0.5)" fill="none"></path>
+			</defs>
+			<!-- use xlink:href="#timeT-text-path" fill="none" stroke="red"  / -->
+
+			<text id="text-area">
+				<textPath id="text-content" xlink:href="#timeT-text-path" textLength="900"></textPath>
+			</text>
+		</svg>
+	</div>
 </body>
 </html>
