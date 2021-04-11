@@ -1,0 +1,17 @@
+.floating-box {
+    position: fixed;
+    width: 100px;
+    height: 100px;
+    z-index: 0;
+    
+    /*box-shadow: h-shadow v-shadow blur spread color inset;*/
+    box-shadow: 0px 0px 10px 10px rgb(214, 214, 214);
+}
+
+.top-floating-box {
+    position: fixed;
+    width: 100px;
+    height: 100px;
+    background-color: white;
+    z-index: 100;
+}

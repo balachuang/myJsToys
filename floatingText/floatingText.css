@@ -1,0 +1,11 @@
+#timeText {
+    position: fixed;
+    font-family: 'Abril Fatface', cursive;
+    font-size: 50px;
+    color: blue;
+    top: 100px;
+    left: 100px;
+
+    -webkit-filter: drop-shadow(6px 6px 4px rgba(0, 0, 0, 0.4));
+    filter: drop-shadow(6px 6px 4px rgba(0, 0, 0, 0.4))
+}
