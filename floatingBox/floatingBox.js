@@ -1,5 +1,6 @@
 const CONST_X_COUNT = 20;
 const CONST_Y_COUNT = 10;
+const SHADOW_COLOR = 'rgba(0,0,0,0.7)';
 
 var boxCenter = [];
 
@@ -62,7 +63,7 @@ function mousemoveHandler(event)
         let delta = Math.max(10, Math.max(Math.abs(deltaX), Math.abs(deltaY)));
     
         $(this).css({
-            'box-shadow' : deltaX+'px '+deltaY+'px '+delta+'px '+delta+'px rgb(214, 214, 214)'
+            'box-shadow' : deltaX+'px '+deltaY+'px '+delta+'px '+delta+'px '+SHADOW_COLOR
         });
     });
 }

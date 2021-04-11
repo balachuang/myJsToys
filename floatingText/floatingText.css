@@ -1,11 +1,15 @@
+body {
+	background-color: rgb(36, 37, 38);
+}
+
 #timeText {
     position: fixed;
     font-family: 'Abril Fatface', cursive;
     font-size: 50px;
-    color: blue;
+    color: white;
     top: 100px;
     left: 100px;
 
-    -webkit-filter: drop-shadow(6px 6px 4px rgba(0, 0, 0, 0.4));
-    filter: drop-shadow(6px 6px 4px rgba(0, 0, 0, 0.4))
+    -webkit-filter: drop-shadow(6px 6px 4px rgba(139, 139, 139, 0.6));
+    filter: drop-shadow(6px 6px 4px rgba(139, 139, 139, 0.6))
 }
