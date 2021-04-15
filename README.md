@@ -1,4 +1,4 @@
 # myJsToys
 This is some little toys in Javascript
 
-Demo: https://balachuang.github.io/myJsToys/
+Demo: https://balachuang.github.io/myJsToys/index.html
