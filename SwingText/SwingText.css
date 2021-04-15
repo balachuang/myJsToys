@@ -6,14 +6,11 @@ body {
     position: fixed;
     top: 0px;
     left: 0px;
-    border: 1px solid white;
+    border: none;
 }
 
 #text-area {
     font-family: 'Caveat', cursive;
     font-size: 25px;
-    fill: white;
-
-    -webkit-filter: drop-shadow(6px 6px 4px rgba(139, 139, 139, 0.6));
-    filter: drop-shadow(6px 6px 4px rgba(139, 139, 139, 0.6))
-}
+    fill: lightblue;
+} 
