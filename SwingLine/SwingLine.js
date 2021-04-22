@@ -1,11 +1,11 @@
 let CONST_HEAD_ROTATE_COEF = 0.005;
 let CONST_SECT_CNT = 25;
-let CONST_SECT_LEN = 40;
+let CONST_SECT_LEN = 30;
 let CONST_SWING_MAX_ANG = dia(10);
-let CONST_TIME_INTERVAL = 10;		// ms
-let CONST_SWING_CYCLE = 100;		// intreval count
-let CONST_SWING_DELAY = 5;		// interval count
-let CONST_AFTER_IMAGE_COUNT = 30;
+let CONST_TIME_INTERVAL = 20;		// ms
+let CONST_SWING_CYCLE = 3000;		// intreval count
+let CONST_SWING_DELAY = 200;		// interval count
+let CONST_AFTER_IMAGE_COUNT = 1;
 let CONST_SHOW_SECTION = false;		// interval count
 
 let headCircle = {x:0, y:0, radius:0};
