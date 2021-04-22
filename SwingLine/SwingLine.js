@@ -56,10 +56,7 @@ window.onload = function()
 	$('#config-panel input').change(updateParameters);
 	$('#config-panel input').keyup(updateParameters);
 
-	prepareSvg();
-	intObj = setInterval(() => {
-		updateSwingLine();
-	}, CONST_TIME_INTERVAL);
+	updateParameters();
 };
 
 function updateSwingLine()
