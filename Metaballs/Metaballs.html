@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Swing Motion</title>
+	<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
+	<script src="Metaballs.js"></script>
+	<link rel="stylesheet" href="Metaballs.css">
+	<script>
+	</script>
+</head>
+<body>
+	<span id="control-panel">
+		<div id="add-ball" class="metaball-btn">Add Ball</div>
+		Control Ball Radius: <input type="number" id="control-ball-radius" value="50" quick-btn="10,20,30,40,50,60,70,80,90,100">
+		Metaball Area Point Size: <input type="number" id="metaball-area-ptsize" value="5" quick-btn="5,10,15,20">
+		Metaball Threshold: <input type="number" id="metaball-threshold" value="0.5" quick-btn="0.1,0.2,0.3,0.4,0.5,1,1.5,2">
+		<input type="checkbox" id="real-time" style="width:15px; margin-right:5px;" checked>Real-Time Calculation<br>
+		<input type="checkbox" id="display-ctrl-ball" style="width:15px; margin-right:5px;" checked>Display Control Balls<br>
+	</span>
+	<div id="svg-container">
+		<svg id="svg-area" xmlns="http://www.w3.org/2000/svg"></svg>
+	</div>
+</body>
+</html>

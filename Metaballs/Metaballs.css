@@ -1,0 +1,65 @@
+body {
+	background-color: rgb(36, 37, 38);
+}
+
+#control-panel {
+	font-family: 'Caveat', cursive;
+	font-size: 14px;
+	position: fixed;
+	top: 10px;
+	left: 10px;
+	color: lightgray;
+	background: none;
+	z-index: 100;
+}
+
+#control-panel input {
+	color: yellow;
+	background: none;
+	border: none;
+	border-bottom: 1px solid rgb(104, 104, 104);
+	width: 50px;
+	text-align: center;
+	line-height: 150%;
+}
+
+span.value-btn {
+	font-size: 12px;
+	margin-left: 10px;
+	padding: 2px 3px;
+	cursor: pointer;
+	background-color: black;
+	border: 1px solid rgb(104, 104, 104);
+}
+
+#svg-container {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    border: none;
+}
+
+.ctrl-ball {
+    stroke: white;
+    fill: rgba(0, 0, 0, 0.397);
+    cursor: hand;
+}
+
+.ctrl-ball.hide {
+    stroke: none;
+    fill: rgba(0, 0, 0, 0);
+    cursor: hand;
+}
+
+.metaball-btn {
+    font-family: 'Arial';
+    font-size: 15px;
+    color: lightblue;
+    cursor: pointer;
+} 
+
+.metaball-point {
+    stroke: none;
+    fill: rgba(243, 227, 7, 0.384);
+    pointer-events: none;
+}
