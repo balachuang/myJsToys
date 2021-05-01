@@ -63,3 +63,14 @@ span.value-btn {
     fill: rgba(243, 227, 7, 0.384);
     pointer-events: none;
 }
+
+.boundary {
+    stroke: yellow;
+    stroke-width: 2;
+    fill: none;
+}
+
+.boundary-ptn {
+    fill: yellow;
+    stroke: none;
+}

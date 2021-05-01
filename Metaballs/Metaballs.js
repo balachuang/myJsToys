@@ -1,11 +1,17 @@
 let DEFAULT_X = 0;
 let DEFAULT_Y = 0;
 let DEFAULT_R = 50;
-let META_AREA_RADIUS = 5;
+let BOUNDARY_RES = 10;
+let AREA_PNT_SIZE = 5;
+let INIT_MOVEMENT = 20;
+let BOUNDARY_RESOLUTION = 10;
+let BOUNDARY_PNT_SIZE = 3;
 let DEFAULT_META_THRESHOLD = 0.5;
 
 let REALTIME = true;
 let DISPLAY_CTRL_BALL = true
+let DISPLAY_MEAT_AREA = true;
+let DISPLAY_MERA_BNDY = true;
 
 let META_FUNC = MFS_R2;
 
@@ -77,7 +83,12 @@ function moveCtrlBall(event)
 	selectedBall.attr('cx', balls[selectedBallId].x);
 	selectedBall.attr('cy', balls[selectedBallId].y);
 
-	if (REALTIME) generateMetaballArea();
+	if (REALTIME)
+	{
+		if (DISPLAY_MEAT_AREA) generateMetaballArea();
+		if (DISPLAY_MERA_BNDY) generateMetaballBoundary();
+	}
+
 	event.preventDefault();
 }
 
@@ -85,21 +96,32 @@ function releaseCtrlBall(event)
 {
 	selectedBall = null;
 	selectedBallId = -1;
-	generateMetaballArea();
+
+	if (DISPLAY_MEAT_AREA) generateMetaballArea();
+	if (DISPLAY_MERA_BNDY) generateMetaballBoundary();
 }
 
 function updateParameters()
 {
 	DEFAULT_R = eval($('#control-ball-radius').val());
-	META_AREA_RADIUS = eval($('#metaball-area-ptsize').val());
+	AREA_PNT_SIZE = eval($('#metaball-area-ptsize').val());
+	BOUNDARY_RESOLUTION = eval($('#metaball-boundaty-resolution').val());
+	BOUNDARY_PNT_SIZE = eval($('#metaball-boundaty-ptsize').val());
 	DEFAULT_META_THRESHOLD = eval($('#metaball-threshold').val());
 
 	REALTIME = $('#real-time').is(':checked');
 	DISPLAY_CTRL_BALL = $('#display-ctrl-ball').is(':checked');
+	DISPLAY_MEAT_AREA = $('#display-metaball-area').is(':checked');
+	DISPLAY_MERA_BNDY = $('#display-metaball-boundary').is(':checked');
 
 	if (DISPLAY_CTRL_BALL)	$('.ctrl-ball').removeClass('hide');
 	else					$('.ctrl-ball').addClass('hide');
-	generateMetaballArea();
+
+	$('.metaball-point').remove();
+	if (DISPLAY_MEAT_AREA) generateMetaballArea();
+
+	$('.boundary').remove();
+	if (DISPLAY_MERA_BNDY) generateMetaballBoundary();
 }
 
 function addBall()
@@ -107,7 +129,8 @@ function addBall()
 	let newBall = {
 		x: DEFAULT_X,
 		y: DEFAULT_Y,
-		r: DEFAULT_R
+		r: DEFAULT_R,
+		isBdryCovered: false
 	}
 	balls.push(newBall);
 
@@ -117,7 +140,8 @@ function addBall()
 
 	$('#svg-area').append(vo);
 
-	generateMetaballArea();
+	if (DISPLAY_MEAT_AREA) generateMetaballArea();
+	if (DISPLAY_MERA_BNDY) generateMetaballBoundary();
 }
 
 function generateMetaballArea()
@@ -140,15 +164,15 @@ function generateMetaballArea()
 	}
 
 	let strengh = 0;
-	for (let sx=minPoint.x; sx<=maxPoint.x; sx+=META_AREA_RADIUS)
+	for (let sx=minPoint.x; sx<=maxPoint.x; sx+=AREA_PNT_SIZE)
 	{
-		for (let sy=minPoint.y; sy<=maxPoint.y; sy+=META_AREA_RADIUS)
+		for (let sy=minPoint.y; sy<=maxPoint.y; sy+=AREA_PNT_SIZE)
 		{
 			strengh = 0;
-			let p = {x: sx, y: sy, r:META_AREA_RADIUS};
+			let p = {x: sx, y: sy, r:AREA_PNT_SIZE};
 			for (let n=0; n<balls.length; ++n) strengh += META_FUNC(p, balls[n]);
 			if (strengh >= DEFAULT_META_THRESHOLD) {
-				p.r = 2 * META_AREA_RADIUS * Math.atan(strengh) / Math.PI;
+				p.r = 2 * AREA_PNT_SIZE * Math.atan(strengh) / Math.PI;
 				var vo = makeSVG('circle', 	{cx:p.x, cy:p.y, r:p.r, class:'metaball-point'});
 				$('#svg-area').append(vo);
 			}
@@ -158,21 +182,220 @@ function generateMetaballArea()
 
 function generateMetaballBoundary()
 {
+	if (balls.length <= 0) return;
 
+	// clear all boundaries
+	$('.boundary').remove();
+	$('.boundary-ptn').remove();
+	for (var n=0; n<balls.length; ++n) balls[n].isBdryCovered = false;
+
+	let nextBallIdx = 0;
+	while(nextBallIdx >= 0)
+	{
+		generateMetaballBoundaryFromBall(nextBallIdx);
+
+		// find next uncovered ball
+		nextBallIdx = -1;
+		for (var n=0; n<balls.length; ++n) {
+			if (!balls[n].isBdryCovered) {
+				nextBallIdx = n;
+				break;
+			}
+		}
+	}
 }
 
-function xyPair(xy) {
-	return xy.x + ' ' + xy.y;
+function generateMetaballBoundaryFromBall(ballIdx)
+{
+	// create a single boundary point
+	let boundary = [{
+		x:balls[ballIdx].x + balls[ballIdx].r,
+		y:balls[ballIdx].y,
+		gradient: {x:0, y:0},
+		movement: INIT_MOVEMENT,
+		lastStnDiff: 0,
+		done:false
+	}];
+
+	// initialize boundery svg
+	var svgBoundary = makeSVG('polygon', {class:'boundary', points:''});
+	$('#svg-area').append(svgBoundary);
+
+	// find next bounary point until close
+	let boundaryClosed = false;
+	while (!boundaryClosed)
+	{
+		// update current boundary position
+		let n = boundary.length - 1;
+		updateBoundaryPoint(boundary[n]);
+
+		// find next boundary point
+		let newPoint = findNextBoundaryPoint(boundary[n]);
+		boundary.push(newPoint);
+
+		// check if bounadry is closed
+		boundaryClosed = checkBoundaryClose(boundary);
+	}
+
+	// draw boundary
+	updateBountdarySvg($(svgBoundary), boundary);
 }
 
-function dia(ang) {
-	return ang * Math.PI / 180;
+function updateBoundaryPoint(bnyPoint)
+{
+	if (bnyPoint.done) return;
+
+	// calculate gradient, no need to recalculate gradient, all movements are in the same diection
+	bnyPoint.gradient = {x:0, y:0};
+	for (let c=0; c<balls.length; ++c)
+	{
+		let g = MFS_R2_DIF(bnyPoint, balls[c]);
+		bnyPoint.gradient.x += g.x;
+		bnyPoint.gradient.y += g.y;
+	}
+	let gradientLength = Math.sqrt(	bnyPoint.gradient.x*bnyPoint.gradient.x + 
+									bnyPoint.gradient.y*bnyPoint.gradient.y );
+
+	while(!bnyPoint.done)
+	{
+		// calculate M() of this boundary control point
+		let strengh = 0;
+		for (let c=0; c<balls.length; ++c) strengh += META_FUNC(bnyPoint, balls[c]);
+
+		let strenghDiff = strengh - DEFAULT_META_THRESHOLD;
+		if (Math.abs(strenghDiff) < DEFAULT_META_THRESHOLD / 30)
+		{
+			// this boundary control point is done
+			bnyPoint.done = true;
+		}
+		else
+		{
+			if (strenghDiff * bnyPoint.lastStnDiff < 0) bnyPoint.movement /= 2;
+			bnyPoint.lastStnDiff = strenghDiff;
+
+			// calculate movement
+			let dd = bnyPoint.movement / gradientLength;
+			if (strenghDiff > 0)
+			{
+				// current M() > threshold
+				bnyPoint.x -= dd * bnyPoint.gradient.x;
+				bnyPoint.y -= dd * bnyPoint.gradient.y;
+			}else{
+				// current M() < threshold
+				bnyPoint.x += dd * bnyPoint.gradient.x;
+				bnyPoint.y += dd * bnyPoint.gradient.y;
+			}
+		}
+	}
+}
+
+function findNextBoundaryPoint(bnyPoint)
+{
+	// find direction is vertical to gradient
+	let findDirection = {
+		x:  bnyPoint.gradient.y ,
+		y: -bnyPoint.gradient.x
+	};
+	let gradientLength = Math.sqrt(	findDirection.x * findDirection.x + 
+									findDirection.y * findDirection.y );
+
+	let dd = BOUNDARY_RESOLUTION / gradientLength;
+	let newPoint = {
+		x: bnyPoint.x + dd * findDirection.x ,
+		y: bnyPoint.y + dd * findDirection.y ,
+		gradient: {x:0, y:0},
+		movement: INIT_MOVEMENT,
+		lastStnDiff: 0,
+		done:false
+	};
+
+	return newPoint;
+}
+
+function checkBoundaryClose(boundary)
+{
+	// check if cover control balls
+	let ballInBoundary = 0;
+	for (var n=0; n<balls.length; ++n)
+	{
+		// return true if any one of balls in bounary
+		if (isPointInBoundary(balls[n], boundary))
+		{
+			// also record check result
+			balls[n].isBdryCovered = true;
+			++ballInBoundary;
+		}
+	}
+	if (ballInBoundary <= 0) return false;
+
+	// check the last point close to the first point
+	let l = boundary.length - 1;
+	let xx = (boundary[0].x - boundary[l].x) * (boundary[0].x - boundary[l].x);
+	let yy = (boundary[0].y - boundary[l].y) * (boundary[0].y - boundary[l].y);
+	let dd = Math.sqrt(xx + yy);
+	if (dd <= BOUNDARY_RESOLUTION) return true;
+
+	return false;
+}
+
+function isPointInBoundary(point, boundary)
+{
+	// remove all points that y equals
+	let chkBoundary = [];
+	for (var n=0; n<boundary.length; ++n) {
+		if (boundary[n].y != point.y) chkBoundary.push(boundary[n]);
+	}
+	if (chkBoundary.length <= 2) return false;
+
+	// calculate cross count
+	let crossCount = 0;
+	for (var n=0; n<chkBoundary.length; ++n)
+	{
+		let m = (n+1) % chkBoundary.length;
+
+		if ((chkBoundary[n].x < point.x) && (chkBoundary[m].x < point.x)) continue;
+
+		if (((chkBoundary[n].y < point.y) && (chkBoundary[m].y > point.y)) ||
+			((chkBoundary[n].y > point.y) && (chkBoundary[m].y < point.y)))
+		{
+			crossCount ++;
+		}
+	}
+
+	// point in boundary if cross count is odd
+	return ((crossCount%2) == 1);
+}
+
+function updateBountdarySvg(svgObj, boundary)
+{
+	//$('.boundary-ptn').remove();
+
+	let bdrySvg = '';
+	for (var n=0; n<boundary.length; ++n)
+	{
+		bdrySvg += xyPair(boundary[n]) + ' ';
+
+		if (BOUNDARY_PNT_SIZE > 1) {
+			var svgBdryPnt = makeSVG(	'circle',
+										{	class:'boundary-ptn',
+											cx: boundary[n].x,
+											cy: boundary[n].y,
+											r:BOUNDARY_PNT_SIZE
+									});
+			$('#svg-area').append(svgBdryPnt);
+		}
+	}
+	svgObj.attr('points', bdrySvg);
 }
 
 function makeSVG(tag, attrs) {
 	var el= document.createElementNS('http://www.w3.org/2000/svg', tag);
 	for (var k in attrs) el.setAttribute(k, attrs[k]);
 	return el;
+}
+
+function xyPair(xy) {
+	return xy.x + ' ' + xy.y;
 }
 
 // metaball function of single control ball...
