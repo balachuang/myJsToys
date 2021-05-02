@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Line Functions</title>
+	<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
+	<script src="../simpleControlPanel.js"></script>
+	<script src="lineFunctions.js"></script>
+	<link rel="stylesheet" href="lineFunctions.css">
+	<script>
+	</script>
+</head>
+<body>
+	<span id="control-panel">
+		<input type="button" class="line-btn" value="Jakob Line"      param="2 7200"/><br>
+		<input type="button" class="line-btn" value="Archimedes Line" param="1 3600"/><br>
+		<input type="button" class="line-btn" value="Circle Line"     param="1 360"/><br>
+		<input type="button" class="line-btn" value="Cardioid Line"   param="0.5 360"/><br>
+		<input type="button" class="line-btn" value="Rose Line"       param="0.5 180"/><br>
+		<input type="button" class="line-btn" value="Descartes Line"  param="0.5 180"/><br>
+	</span>
+	<div id="svg-container">
+		<svg id="svg-area" xmlns="http://www.w3.org/2000/svg"></svg>
+	</div>
+</body>
+</html>

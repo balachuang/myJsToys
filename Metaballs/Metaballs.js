@@ -1,3 +1,5 @@
+// Still some bugs...
+
 let DEFAULT_X = 0;
 let DEFAULT_Y = 0;
 let DEFAULT_R = 50;
@@ -235,6 +237,11 @@ function generateMetaballBoundaryFromBall(ballIdx)
 
 		// check if bounadry is closed
 		boundaryClosed = checkBoundaryClose(boundary);
+
+		if (boundary.length >= 1000) {
+			console.log('boundary point count is abnormal: ' + boundary.length);
+			boundaryClosed = true;
+		}
 	}
 
 	// draw boundary
