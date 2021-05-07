@@ -12,6 +12,7 @@ let prevAngle = 0;
 
 let isR2Catched = false;
 let isR2CircleCatched = false;
+let isFlowerPntCatched = false;
 
 window.onload = function()
 {
@@ -36,39 +37,38 @@ window.onload = function()
 	fp.y = r2.y;
 	updateCircleCenter('#flower-point', fp);
 
-	$('#R2C').mousedown(catchR2Center);
-	$('#R2').mousedown(catchR2Circle);
+	$('#R2C').mousedown(function(){ isR2Catched = true; });
+	$('#R2').mousedown(function(){ isR2CircleCatched = true; });
+	$('#flower-point').mousedown(function(){ isFlowerPntCatched = true; });
     $(document).mousemove(mousemoveHandler);
     $(document).mouseup(releaseR2);
 };
-
-function catchR2Center(event)
-{
-	isR2Catched = true;
-}
-
-function catchR2Circle(event)
-{
-	isR2CircleCatched = true;
-}
-
-function mousemoveHandler(event)
-{
-	if (isR2Catched) {
-		let mousePnt = {x: event.pageX, y: event.pageY};
-		updateR2Center(toReal(mousePnt));
-	}
-
-	if (isR2CircleCatched) {
-		let mousePnt = {x: event.pageX, y: event.pageY};
-		updateR2Radius(toReal(mousePnt));
-	}
-}
 
 function releaseR2()
 {
 	isR2Catched = false;
 	isR2CircleCatched = false;
+	isFlowerPntCatched = false;
+}
+
+function mousemoveHandler(event)
+{
+	let mousePnt = {x: event.pageX, y: event.pageY};
+	let mouseRealPnt = toReal(mousePnt);
+
+	if (isR2Catched) updateR2Center(mouseRealPnt);
+	if (isR2CircleCatched) updateR2Radius(mouseRealPnt);
+	if (isFlowerPntCatched) updateFlowerPnt(mouseRealPnt);
+}
+
+function updateFlowerPnt(mouseRealPnt)
+{
+	let ex = mouseRealPnt.x - r2.x;
+	let ey = mouseRealPnt.y - r2.y;
+	fp.r = Math.sqrt(ex * ex + ey * ey);
+	updateCircleCenter('#flower-point', fp);
+
+	updateFlowerLine(prevAngle);
 }
 
 function updateR2Radius(mouseRealPnt)
