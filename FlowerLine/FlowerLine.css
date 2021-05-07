@@ -53,11 +53,15 @@ span.value-btn {
 
 #flower-line {
 	fill: none;
-	stroke: rgb(247, 252, 0);
+	stroke: rgba(248, 252, 0, 0.514);
 	stroke-width: 3px;
 }
 
 #flower-point {
 	fill: rgb(247, 252, 0);
 	stroke: none;
+}
+
+#R2, #R2C, #flower-point {
+	cursor: grab;
 }

@@ -1,13 +1,3 @@
-// let CONST_HEAD_ROTATE_COEF = 0.005;
-// let CONST_SECT_CNT = 25;
-// let CONST_SECT_LEN = 30;
-// let CONST_SWING_MAX_ANG = dia(10);
-// let CONST_TIME_INTERVAL = 20;		// ms
-// let CONST_SWING_CYCLE = 3000;		// intreval count
-// let CONST_SWING_DELAY = 200;		// interval count
-// let CONST_AFTER_IMAGE_COUNT = 1;
-// let CONST_SHOW_SECTION = false;		// interval count
-
 let xTotal = window.innerWidth;
 let yTotal = window.innerHeight;
 let xMax = xTotal / 2;
@@ -21,7 +11,7 @@ let rotateCount = 0;
 let prevAngle = 0;
 
 let isR2Catched = false;
-//let r2CatchPoint = {x:0, y:0};
+let isR2CircleCatched = false;
 
 window.onload = function()
 {
@@ -34,47 +24,71 @@ window.onload = function()
 	updateCircleCenter('#R1C', r1);
 	$('#R1').attr('r', r1.r);
 
-	r2.r = 0.4 * r1.r;
+	r2.r = 0.7 * r1.r;
 	r2.x = r1.x + r1.r - r2.r;
 	r2.y = r1.y;
 	updateCircleCenter('#R2', r2);
 	updateCircleCenter('#R2C', r2);
 	$('#R2').attr('r', r2.r);
 
-	fp.r = 0.7 * r2.r;
+	fp.r = 0.6 * r2.r;
 	fp.x = r2.x + fp.r;
 	fp.y = r2.y;
 	updateCircleCenter('#flower-point', fp);
-	//$('#flower-line').attr('points', r2.x + fradius + ' ' + r2.y);
 
-	$('#R2C').mousedown(catchR2);
-	//$('#R2C').mouseup(releaseR2);
+	$('#R2C').mousedown(catchR2Center);
+	$('#R2').mousedown(catchR2Circle);
     $(document).mousemove(mousemoveHandler);
     $(document).mouseup(releaseR2);
-
-	//updateParameters();
 };
 
-function catchR2(event)
+function catchR2Center(event)
 {
 	isR2Catched = true;
-	// r2CatchPoint.x = event.pageX;
-	// r2CatchPoint.y = event.pageY;
+}
+
+function catchR2Circle(event)
+{
+	isR2CircleCatched = true;
 }
 
 function mousemoveHandler(event)
 {
-	if (!isR2Catched) return;
-	let mousePnt = {x: event.pageX, y: event.pageY};
-	updateFlowerLine(toReal(mousePnt));
+	if (isR2Catched) {
+		let mousePnt = {x: event.pageX, y: event.pageY};
+		updateR2Center(toReal(mousePnt));
+	}
+
+	if (isR2CircleCatched) {
+		let mousePnt = {x: event.pageX, y: event.pageY};
+		updateR2Radius(toReal(mousePnt));
+	}
 }
 
 function releaseR2()
 {
 	isR2Catched = false;
+	isR2CircleCatched = false;
 }
 
-function updateFlowerLine(mouseRealPnt)
+function updateR2Radius(mouseRealPnt)
+{
+	// calculate A1
+	let ex = mouseRealPnt.x - r2.x;
+	let ey = mouseRealPnt.y - r2.y;
+	let rDif = r2.r - fp.r;
+	r2.r = Math.sqrt(ex * ex + ey * ey);
+	r2.x = (r1.r - r2.r) * Math.cos(prevAngle);
+	r2.y = (r1.r - r2.r) * Math.sin(prevAngle);
+	fp.r = r2.r - rDif;
+	$('#R2').attr('r', r2.r);
+	updateCircleCenter('#R2', r2);
+	updateCircleCenter('#R2C', r2);
+
+	updateFlowerLine(prevAngle);
+}
+
+function updateR2Center(mouseRealPnt)
 {
 	// calculate A1
 	let ex = mouseRealPnt.x - r1.x;
@@ -83,6 +97,12 @@ function updateFlowerLine(mouseRealPnt)
 	if (prevAngle - currAngle > Math.PI) ++rotateCount;
 	if (currAngle - prevAngle > Math.PI) --rotateCount;
 	prevAngle = currAngle;
+
+	updateFlowerLine(currAngle);
+}
+
+function updateFlowerLine(currAngle)
+{
 
 	let a1 = rotateCount * Math.PI * 2 + currAngle;
 
@@ -106,7 +126,7 @@ function updateFlowerLine(mouseRealPnt)
 		fPathStr += xyPair(toDisplay(fp)) + ' ';
 		calAngle += aStep;
 	}
-	console.log(fPathStr);
+
 	updateCircleCenter('#flower-point', fp);
 	$('#flower-line').attr('points', fPathStr);
 }
