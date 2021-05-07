@@ -1,0 +1,63 @@
+body {
+	background-color: rgb(36, 37, 38);
+}
+
+#svg-container {
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	border: none;
+}
+
+#config-panel {
+	font-family: 'Caveat', cursive;
+	font-size: 14px;
+	position: fixed;
+	top: 10px;
+	left: 10px;
+	color: lightgray;
+	background: none;
+	z-index: 100;
+}
+
+#config-panel input {
+	color: yellow;
+	background: none;
+	border: none;
+	border-bottom: 1px solid rgb(104, 104, 104);
+	width: 50px;
+	text-align: center;
+	line-height: 150%;
+}
+
+span.value-btn {
+	font-size: 12px;
+	margin-left: 10px;
+	padding: 2px 3px;
+	cursor: pointer;
+	background-color: black;
+	border: 1px solid rgb(104, 104, 104);
+}
+
+.flower-ruler {
+	fill: none;
+	stroke: rgb(78, 78, 78);
+	stroke-width: 10px;
+}
+
+.flower-ruler-center {
+	fill: rgb(78, 78, 78);
+	stroke: rgb(138, 138, 138);
+	stroke-width: 1px;
+}
+
+#flower-line {
+	fill: none;
+	stroke: rgb(247, 252, 0);
+	stroke-width: 3px;
+}
+
+#flower-point {
+	fill: rgb(247, 252, 0);
+	stroke: none;
+}

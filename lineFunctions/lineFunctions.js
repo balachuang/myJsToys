@@ -99,7 +99,7 @@ function lf_Jakob(x, a)
 {
 	let aa = a * Math.PI / 180;
 	let ss = Math.sin(aa);
-	let ii = Math.exp (aa/5) - 2 * x * ss;
+	let ii = Math.exp (aa / 6) - 2 * x * ss + 5;
 	let jj = ss - Math.cos(aa);
 
 	return x + ii / jj;
@@ -112,7 +112,7 @@ function lf_Archimedes(x, a)
 	let aa = a * Math.PI / 180;
 	let ss = Math.sin(aa);
 	let cc = Math.cos(aa);
-	let ii = x * (ss + aa * cc) - 10 * aa * aa;
+	let ii = x * (ss + aa * cc + 50) - 10 * aa * aa ;
 	let jj = cc - aa * ss;
 
 	return ii / jj;
@@ -156,7 +156,7 @@ function lf_Rose(x, a)
 	let cc2 = Math.cos(2 * aa);
 	let cc4 = Math.cos(4 * aa);
 	let cc6 = Math.cos(6 * aa);
-	let ii = 2 * x * (cc2 - 2 * cc4) + 200 + cc6;
+	let ii = 2 * x * (cc2 - 2 * cc4) + 300 + cc6;
 	let jj = 2 * ss2 + 4 * ss4;
 
 	return ii / jj;
