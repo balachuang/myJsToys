@@ -6,7 +6,7 @@ const CLOUD_RADIUS = 1.015 * EARTH_RADIUS;
 const RADIUS_DIFF = 30;
 const POINT_COUNT = 500;
 const EARTH_ROTATE_SPEED = 0; //Math.PI / 200000;
-const CLOUD_ROTATE_SPEED = EARTH_ROTATE_SPEED + Math.PI / 100000;
+const CLOUD_ROTATE_SPEED = EARTH_ROTATE_SPEED - Math.PI / 100000;
 
 // create 3d scene
 const scene = new THREE.Scene();
