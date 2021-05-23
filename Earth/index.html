@@ -11,9 +11,34 @@
 		body {
 			margin: 0;
 		}
+		#config-panel {
+			color: yellow;
+			position: fixed;
+			left: 10px;
+			top: 10px;
+			background: none;
+		}
+		#config-panel input {
+			background: none;
+			border: none;
+			width: 50px;
+			/* text-align: center; */
+			line-height: 150%;
+		}
 	</style>
 </head>
 <body>
+	<!-- span id="config-panel">
+		<input type="checkbox" id="show-Night" style="width:15px; margin-right:5px;">Sun <br>
+		<input type="checkbox" id="show-Night" style="width:15px; margin-right:5px;">Night <br>
+		<input type="checkbox" id="show-Night" style="width:15px; margin-right:5px;">Cloud <br>
+	</span -->
+	<video id="earthDay" loop crossOrigin="anonymous" playsinline style="display:none">
+		<source src="Texture/EarthRotate_Day.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
+	</video>
+	<video id="earthNight" loop crossOrigin="anonymous" playsinline style="display:none">
+		<source src="Texture/EarthRotate_Night.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
+	</video>
 	<script type="module" src="main.js"></script>
 </body>
 </html>

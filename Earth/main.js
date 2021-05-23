@@ -5,8 +5,8 @@ const EARTH_RADIUS = 100;
 const CLOUD_RADIUS = 1.015 * EARTH_RADIUS;
 const RADIUS_DIFF = 30;
 const POINT_COUNT = 500;
-const EARTH_ROTATE_SPEED = 2 * Math.PI / 90000;
-const CLOUD_ROTATE_SPEED = 2 * Math.PI / 70000;
+const EARTH_ROTATE_SPEED = 0; //Math.PI / 200000;
+const CLOUD_ROTATE_SPEED = EARTH_ROTATE_SPEED + Math.PI / 100000;
 
 // create 3d scene
 const scene = new THREE.Scene();
@@ -24,6 +24,7 @@ camera.lookAt( 0, 0, 0 );
 
 let earth = createEarth();
 scene.add(earth.day);
+scene.add(earth.night);
 scene.add(earth.cloud);
 
 // create renderer
@@ -58,29 +59,72 @@ function animate() {
 	renderer.render( scene, camera );
 }
 
+// PS. three.js 同一個 material 只有一個 offset 設定, 所有的 texture 共用.
 function createEarth()
 {
-	// earth texture
-	const earthTexture = new THREE.TextureLoader().load('./Texture/Earth.png');
-	const earthMaterial = new THREE.MeshBasicMaterial({map: earthTexture});
+	// earth texture - transparent video !!!
+	var dayVideo = document.getElementById( 'earthDay' );
+	var nightVideo = document.getElementById( 'earthNight' );
+	dayVideo.play();
+	nightVideo.play();
+
+	// earth texture - Day
+	const earthDayTexture = new THREE.TextureLoader().load('./Texture/Earth_Day.png');
+	// const earthDayAlphaTexture = new THREE.TextureLoader().load('./Texture/Earth_Day_alpha.png');
+	const earthDayAlphaTexture = new THREE.VideoTexture( dayVideo );
+	const earthDayMaterial = new THREE.MeshBasicMaterial({
+		map: earthDayTexture,
+		alphaMap: earthDayAlphaTexture,
+		blending: THREE.AdditiveBlending
+	});
+	earthDayMaterial.map.wrapS = THREE.RepeatWrapping;
+	earthDayMaterial.alphaMap.wrapS = THREE.RepeatWrapping;
+	earthDayMaterial.map.repeat.x = 1;
+	earthDayMaterial.alphaMap.repeat.x = 1;
+
+	// earth texture - Night
+	const earthNightTexture = new THREE.TextureLoader().load('./Texture/Earth_Night.png');
+	// const earthNightAlphaTexture = new THREE.TextureLoader().load('./Texture/Earth_Night_alpha.png');
+	const earthNightAlphaTexture = new THREE.VideoTexture( nightVideo );
+	const earthNightMaterial = new THREE.MeshBasicMaterial({
+		map: earthNightTexture,
+		alphaMap: earthNightAlphaTexture,
+		blending: THREE.AdditiveBlending
+	});
+	earthNightMaterial.map.wrapS = THREE.RepeatWrapping;
+	earthNightMaterial.alphaMap.wrapS = THREE.RepeatWrapping;
+	earthNightMaterial.map.repeat.x = 1;
+	earthNightMaterial.alphaMap.repeat.x = 1;
 
 	// cloud texture
 	const cloudTexture = new THREE.TextureLoader().load('./Texture/Cloud.png');
-	const cloudMaterial = new THREE.MeshBasicMaterial({map: cloudTexture, alphaMap: cloudTexture, blending: THREE.AdditiveBlending});
+	const cloudMaterial = new THREE.MeshBasicMaterial({
+		map: cloudTexture,
+		alphaMap: cloudTexture,
+		blending: THREE.AdditiveBlending
+	});
 
 	// models
-	const earthGeometry = new THREE.SphereGeometry(EARTH_RADIUS, 64, 64);
+	const earthDayGeometry = new THREE.SphereGeometry(EARTH_RADIUS, 64, 64);
+	const earthNightGeometry = new THREE.SphereGeometry(EARTH_RADIUS, 64, 64);
 	const cloudGeometry = new THREE.SphereGeometry(CLOUD_RADIUS, 64, 64);
 
 	// objects
-	const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+	const earthDay   = new THREE.Mesh(earthDayGeometry,   earthDayMaterial);
+	const earthNight = new THREE.Mesh(earthNightGeometry, earthNightMaterial);
 	const cloud = new THREE.Mesh(cloudGeometry, cloudMaterial);
-	earth.position.set(0, 0, 0);
+	earthDay.position.set(0, 0, 0);
+	earthNight.position.set(0, 0, 0);
 	cloud.position.set(0, 0, 0);
 
+	// console.log(earthNight.material.alphaMap);
+	// earthNight.material.alphaMap.offset.x += 0.5;
+	// earthDay.material.alphaMap.rotateY += Math.PI / 2;
+	// earthNight.material.alphaMap.rotateX += Math.PI / 2;
+
 	let earthInt = {
-		day: earth,
-		night: null,
+		day: earthDay,
+		night: earthNight,
 		cloud: cloud
 	};
 	return earthInt;
@@ -91,10 +135,13 @@ function updateEarthRotation(delta)
 {
 	let earthRotateAngle = EARTH_ROTATE_SPEED * delta;
 	let cloudRotateAngle = CLOUD_ROTATE_SPEED * delta;
-	console.log(earthRotateAngle);
 
 	earth.day.rotateY(earthRotateAngle);
+	earth.night.rotateY(earthRotateAngle);
 	earth.cloud.rotateY(cloudRotateAngle);
+	// earth.day.material.map.offset.x -= sunRotateAngle;
+	// earth.night.material.map.offset.x -= sunRotateAngle;
+	// earth.night.material.alphaMap.rotateY -= sunRotateAngle;
 }
 
 /*
