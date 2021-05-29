@@ -5,6 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>three.js</title>
+	<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
 	<script type="module" src="three.min.js"></script>
 	<script type="module" src="OrbitControls.js"></script>
 	<style>
@@ -28,17 +29,19 @@
 	</style>
 </head>
 <body>
-	<!-- span id="config-panel">
-		<input type="checkbox" id="show-Night" style="width:15px; margin-right:5px;">Sun <br>
-		<input type="checkbox" id="show-Night" style="width:15px; margin-right:5px;">Night <br>
-		<input type="checkbox" id="show-Night" style="width:15px; margin-right:5px;">Cloud <br>
-	</span -->
+	<span id="config-panel">
+		<input type="checkbox" id="show-sun" style="width:15px; margin-right:5px;" checked>Sun <br>
+		<input type="checkbox" id="show-night" style="width:15px; margin-right:5px;" checked>Night <br>
+		<input type="checkbox" id="show-cloud" style="width:15px; margin-right:5px;" checked>Cloud <br>
+	</span>
+	<!-- <video id="earthDay"   loop crossOrigin="anonymous" src="Texture/EarthRotate_Day.mp4"   type='video/mp4;" style="display:none" /> -->
+	<!-- <video id="earthNight" loop crossOrigin="anonymous" src="Texture/EarthRotate_Night.mp4" type='video/mp4;" style="display:none" /> -->
 	<video id="earthDay" loop crossOrigin="anonymous" playsinline style="display:none">
 		<source src="Texture/EarthRotate_Day.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
 	</video>
 	<video id="earthNight" loop crossOrigin="anonymous" playsinline style="display:none">
 		<source src="Texture/EarthRotate_Night.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
 	</video>
-	<script type="module" src="main.js"></script>
+<script type="module" src="main.js"></script>
 </body>
 </html>
