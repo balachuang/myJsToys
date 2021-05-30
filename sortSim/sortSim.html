@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Swing Motion</title>
+	<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+	<script src="sortSim.js"></script>
+	<link rel="stylesheet" href="sortSim.css">
+</head>
+<body>
+	<div class="col c1">
+		<div id="step-display">
+			<div id="step-display-content">
+				Click "Start" to sort...
+			</div>
+		</div>
+	</div>
+	<div class="col c2">
+		<svg id="svg-area" xmlns="http://www.w3.org/2000/svg" />
+	</div>
+	<div id="control-panel">
+		Sort Method: 
+		<select id="sort-method">
+			<option value="Bubble" selected>Bubble Sort</option>
+			<option value="Quick">Quick Sort</option>
+		</select>&nbsp;&nbsp;&nbsp;&nbsp;
+		Data Count: <input type="text" id="data-count" value="10" style="width:50px;">&nbsp;&nbsp;&nbsp;&nbsp;
+		Delay Time (ms): <input type="text" id="delay-time" value="100" style="width:50px;">&nbsp;&nbsp;&nbsp;&nbsp;
+		<input type="button" id="reset" value="Reset">
+		<input type="button" id="stop" value="Stop">
+		<input type="button" id="start" value="Start">
+	</div>
+</body>
+</html>
