@@ -55,6 +55,7 @@ function initData()
 	scaleX = d3.scale.linear().domain([0, DATA_COUNT * BAR_AREA]).range([0, $('#svg-area').width()]);
 	scaleY1 = d3.scale.linear().domain([0, d3.max(data)]).range([0, $('#svg-area').height()]); // use for Y-length
 	scaleY2 = d3.scale.linear().domain([0, d3.max(data)]).range([$('#svg-area').height(), 0]); // use for Y-position
+	scaleColor = d3.scale.linear().domain([0, d3.max(data)]).range([64, 224]); // use for Color
 }
 
 function initBarChart()
@@ -69,7 +70,10 @@ function initBarChart()
 			y: function(val){ return scaleY2(val); }
 		})
 		.style({
-			fill: 'lightgray',
+			fill: function(val){
+				let c = scaleColor(val);
+				return 'rgb(' + c + ',' + c + ',' + c + ')';
+			},
 			stroke: 'none'
 		});
 }
@@ -86,8 +90,15 @@ function updateBarChart()
 		})
 		.style({
 			fill: function(val, idx) {
-				return (activeIdxs.indexOf(idx) >= 0) ? 'orange' : 'lightgray';
-			}
+				if (activeIdxs.indexOf(idx) >= 0)
+				{
+					return 'yellow';
+				}else{
+					let c = scaleColor(val);
+					return 'rgb(' + c + ',' + c + ',' + c + ')';
+				}
+			},
+			stroke: 'none'
 		});
 }
 
