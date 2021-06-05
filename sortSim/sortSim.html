@@ -25,13 +25,23 @@
 		Sort Method: 
 		<select id="sort-method">
 			<option value="Bubble" selected>Bubble Sort</option>
+			<option value="Cocktail">Cocktail Sort</option>
 			<option value="Quick">Quick Sort</option>
-		</select>&nbsp;&nbsp;&nbsp;&nbsp;
-		Data Count: <input type="text" id="data-count" value="10" style="width:50px;">&nbsp;&nbsp;&nbsp;&nbsp;
-		Delay Time (ms): <input type="text" id="delay-time" value="100" style="width:50px;">&nbsp;&nbsp;&nbsp;&nbsp;
-		<input type="button" id="reset" value="Reset">
+			<option value="Counting">Counting Sort</option>
+		</select>
+		<span class="seperator">&nbsp;</span>
+		Data Count: <input type="text" id="data-count" value="10" style="width:50px;">
+		<span class="seperator">&nbsp;</span>
+		Delay Time (ms): <input type="text" id="delay-time" value="100" style="width:50px;">
+		<span class="seperator">&nbsp;</span>
+		<input type="button" id="reset" value="Reset to Random">
+		<input type="button" id="reset-a" value="Reset to Ascending">
+		<input type="button" id="reset-d" value="Reset to Descending">
+		<span class="seperator">&nbsp;</span>
 		<input type="button" id="stop" value="Stop">
 		<input type="button" id="start" value="Start">
+		<br><br>
+		<div id="estimation"></div>
 	</div>
 </body>
 </html>
