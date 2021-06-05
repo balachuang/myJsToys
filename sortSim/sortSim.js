@@ -27,17 +27,7 @@ function initD3()
 	initBarChart();
 	showEstimation();
 
-	$('#reset').click(function(){
-		reset();
-		// $('rect').remove();
-		// $('#step-display-content').text('Click "Start" to sort...');
-		// stepNo = 0;
-
-		// DATA_COUNT = eval($('#data-count').val());
-		// initData();
-		// initBarChart();
-		// showEstimation();
-	});
+	$('#reset').click(function(){ reset(); });
 	$('#reset-a').click(function(){ reset('asc'); });
 	$('#reset-d').click(function(){ reset('des'); });
 	$('#stop').click(function(){
@@ -144,6 +134,9 @@ function sort(method)
 	case 'Quick':
 		sort_Quick(0, data.length-1);
 		break;
+	case 'Merge':
+		sort_Merge(0, data.length-1, true);
+		break;
 	case 'Counting':
 		sort_Counting();
 		break;
@@ -214,54 +207,6 @@ async function sort_Cocktail()
 	showFinish();
 }
 
-async function sort_Counting()
-{
-	let coutingAry = new Array(1000);
-	coutingAry.fill(0);
-
-	let minValue = Number.MAX_SAFE_INTEGER;
-	let maxValue = Number.MIN_SAFE_INTEGER;
-
-	// counting
-	for (var n=0; n<data.length; ++n)
-	{
-		if (minValue > data[n]) minValue = data[n];
-		if (maxValue < data[n]) maxValue = data[n];
-
-		++coutingAry[data[n]];
-
-		showMessage('Count: ('+n+') ' + data[n]);
-		await updateAndBreak([n]);
-		if (forceStop) break;
-	}
-
-	// acumulate
-	showMessage('Accumlating...');
-	// let acc = coutingAry[minValue];
-	for (var n=minValue+1; n<=maxValue; ++n)
-	{
-		coutingAry[n] += coutingAry[n-1];
-
-		if (forceStop) break;
-	}
-
-	// re-fill
-	let tempData = Array.from(data);
-	for (var n=tempData.length-1; n>=0; --n)
-	{
-		let val = tempData[n];
-		let idx = --coutingAry[val];
-		data[idx] = val;
-
-		showMessage('Re-fill: ('+idx+') ' + data[idx]);
-		await updateAndBreak([idx]);
-		if (forceStop) break;
-	}
-
-	await updateAndBreak([]);
-	showFinish();
-}
-
 async function sort_Quick(lft, rgt)
 {
 	showMessage('Process: ' + lft + ' ~ ' + rgt);
@@ -309,6 +254,128 @@ async function sort_QuickPartition(lft, rgt)
 
 	swap(storeIndex, rgt);
 	return storeIndex;
+}
+
+async function sort_Merge(lft, rgt, isRoot)
+{
+	// pre-check, stop the recursive
+	if (lft == rgt) return;
+	if (lft + 1 == rgt)
+	{
+		swapByCompare(lft, rgt);
+		await updateAndBreak([lft, rgt]);
+		return;
+	}
+
+	showMessage('Devide ' + lft + ' ~ ' + rgt);
+	await updateAndBreak([lft, rgt]);
+	if (forceStop) return;
+
+	// cut into 2 arrays and sort
+	let cutIdx = Math.round((lft + rgt) / 2);
+	await sort_Merge(lft, cutIdx - 1, false);
+	await sort_Merge(cutIdx, rgt, false);
+
+	// merge
+	let insterIdx = lft;
+	let lftIdx = lft;
+	let rgtIdx = cutIdx;
+	let tempData = Array.from(data);
+	while ((lftIdx <= cutIdx - 1) && (rgtIdx <= rgt))
+	{
+		showMessage('Merge ' + lftIdx + ' & ' + rgtIdx);
+		if (tempData[lftIdx] == tempData[rgtIdx])
+		{
+			data[insterIdx++] = tempData[lftIdx++];
+			data[insterIdx++] = tempData[rgtIdx++];
+			await updateAndBreak([lft, rgt, insterIdx-2]);
+		}
+		else if (tempData[lftIdx] < tempData[rgtIdx])
+		{
+			data[insterIdx++] = tempData[lftIdx++];
+			await updateAndBreak([lft, rgt, insterIdx-1]);
+		}
+		else
+		{
+			data[insterIdx++] = tempData[rgtIdx++];
+			await updateAndBreak([lft, rgt, insterIdx-1]);
+		}
+		if (forceStop) break;
+	}
+
+	if (lftIdx <= cutIdx - 1)
+	{
+		for (var n=lftIdx; n<=cutIdx - 1; ++n)
+		{
+			data[insterIdx++] = tempData[n];
+			await updateAndBreak([insterIdx-1, n]);
+			if (forceStop) break;
+		}
+	}
+
+	if (rgtIdx <= rgt)
+	{
+		for (var n=rgtIdx; n<=rgt; ++n)
+		{
+			data[insterIdx++] = tempData[n];
+			await updateAndBreak([insterIdx-1, n]);
+			if (forceStop) break;
+		}
+	}
+
+	if (isRoot)
+	{
+		await updateAndBreak([]);
+		showFinish();
+	}
+}
+
+async function sort_Counting()
+{
+	let coutingAry = new Array(1000);
+	coutingAry.fill(0);
+
+	let minValue = Number.MAX_SAFE_INTEGER;
+	let maxValue = Number.MIN_SAFE_INTEGER;
+
+	// counting
+	for (var n=0; n<data.length; ++n)
+	{
+		if (minValue > data[n]) minValue = data[n];
+		if (maxValue < data[n]) maxValue = data[n];
+
+		++coutingAry[data[n]];
+
+		showMessage('Count: ('+n+') ' + data[n]);
+		await updateAndBreak([n]);
+		if (forceStop) break;
+	}
+
+	// acumulate
+	showMessage('Accumlating...');
+	// let acc = coutingAry[minValue];
+	for (var n=minValue+1; n<=maxValue; ++n)
+	{
+		coutingAry[n] += coutingAry[n-1];
+
+		if (forceStop) break;
+	}
+
+	// re-fill
+	let tempData = Array.from(data);
+	for (var n=tempData.length-1; n>=0; --n)
+	{
+		let val = tempData[n];
+		let idx = --coutingAry[val];
+		data[idx] = val;
+
+		showMessage('Re-fill: ('+idx+') ' + data[idx]);
+		await updateAndBreak([idx]);
+		if (forceStop) break;
+	}
+
+	await updateAndBreak([]);
+	showFinish();
 }
 
 function swapByCompare(idx1, idx2)
@@ -370,11 +437,14 @@ function showEstimation()
 	case 'Quick':
 		totalCount = Math.round(DATA_COUNT * Math.log2(DATA_COUNT));
 		break;
+	case 'Merge':
+		totalCount = Math.round(DATA_COUNT * Math.log2(DATA_COUNT));
+		break;
 	case 'Counting':
 		totalCount = DATA_COUNT * 2;
 		break;
 	}
-	totalTime = totalCount * ANIMATE_INTERVAL / 1000;
+	totalTime = totalCount * (10 + ANIMATE_INTERVAL) / 1000;
 	$('#estimation').text('Estimated need ' + totalCount + ' steps, ' + totalTime + ' seconds.');
 }
 
