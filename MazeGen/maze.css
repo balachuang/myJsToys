@@ -1,0 +1,37 @@
+.maze-grid {
+  background-color: rgb(26, 27, 28);
+  border: 2px solid rgb(26, 27, 28);
+  position: absolute;
+}
+
+.maze-grid:hover {
+  background-color: rgb(126, 127, 128);
+}
+
+.maze-grid-wall-lft {
+  border-left-color: white;
+}
+
+.maze-grid-wall-top {
+  border-top-color: white;
+}
+
+.maze-grid-wall-rit {
+  border-right-color: white;
+}
+
+.maze-grid-wall-btm {
+  border-bottom-color: white;
+}
+
+.maze-grid-start {
+  background-color: darkmagenta;
+}
+
+.maze-grid-end {
+  background-color: darkgreen;
+}
+
+.maze-grid-curr {
+  background-color: yellow;
+}

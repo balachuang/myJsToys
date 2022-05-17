@@ -1,70 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Kalam&display=swap" rel="stylesheet">
-	<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
-	<style>
-		body {
-			background-color: rgb(36,37,38);
-		}
-		li {
-			color: orange;
-			font-family: 'Kalam', cursive;
-			font-size: 22px;
-		}
-		a {
-			color: lightgray;
-			text-decoration: none;
-			cursor: pointer;
-		}
-		.group-title {
-			color: orange;
-			font-family: 'Kalam', cursive;
-			font-size: 22px;
-		}
-		.cloumn {
-			float: left;
-			max-width: 250px;
-		}
-	</style>
-</head>
-<body>
-	<div class="cloumn">
-		<span class="group-title">SVG</span>
-		<ul>
-			<li><a href="floatingBox/floatingBox.html">floatingBox</a></li>
-			<li><a href="SwingText/SwingText.html">SwingText</a></li>
-			<li><a href="workingTime/workingTime.html">workingTime</a></li>
-			<li><a href="SwingLine/SwingLine.html">SwingLine</a></li>
-			<li><a href="Metaballs/Metaballs.html">Metaballs</a></li>
-			<li><a href="lineFunctions/lineFunctions.html">LineFunctions</a></li>
-			<li><a href="FlowerLine/FlowerLine.html">FlowerLine</a></li>
-		</ul>
-	</div>
-	<div class="cloumn">
-		<span class="group-title">three.js</span>
-		<ul>
-			<li><a href="Web3DPlay/index.html">Web 3D Play</a></li>
-			<li><a href="RoundingPoints/index.html">RoundingPoints - I</a></li>
-			<li><a href="RoundingPoints2/index.html">RoundingPoints - II</a></li>
-			<li><a href="Earth/index.html">Earth Simulation</a></li>
-		</ul>
-	</div>
-	<div class="cloumn">
-		<span class="group-title">D3</span>
-		<ul>
-			<li><a href="sortSim/sortSim.html">Sort Algorithm</a></li>
-		</ul>
-	</div>
-	<script>
-		var columnCount = $('.cloumn').length;
-		var cloumnWidth = window.innerWidth / columnCount;
-		$('.cloumn').width(cloumnWidth);
-	</script>
-</body>
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Kalam&display=swap" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
+    <style>
+      body {
+        background-color: rgb(36, 37, 38);
+      }
+      li {
+        color: orange;
+        font-family: 'Kalam', cursive;
+        font-size: 22px;
+      }
+      a {
+        color: lightgray;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .group-title {
+        color: orange;
+        font-family: 'Kalam', cursive;
+        font-size: 22px;
+      }
+      .cloumn {
+        float: left;
+        max-width: 250px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cloumn">
+      <span class="group-title">SVG</span>
+      <ul>
+        <li><a href="floatingBox/floatingBox.html">floatingBox</a></li>
+        <li><a href="SwingText/SwingText.html">SwingText</a></li>
+        <li><a href="workingTime/workingTime.html">workingTime</a></li>
+        <li><a href="SwingLine/SwingLine.html">SwingLine</a></li>
+        <li><a href="Metaballs/Metaballs.html">Metaballs</a></li>
+        <li><a href="lineFunctions/lineFunctions.html">LineFunctions</a></li>
+        <li><a href="FlowerLine/FlowerLine.html">FlowerLine</a></li>
+        <li><a href="MazeGen/mazeGen.html">Maze Generator</a></li>
+      </ul>
+    </div>
+    <div class="cloumn">
+      <span class="group-title">three.js</span>
+      <ul>
+        <li><a href="Web3DPlay/index.html">Web 3D Play</a></li>
+        <li><a href="RoundingPoints/index.html">RoundingPoints - I</a></li>
+        <li><a href="RoundingPoints2/index.html">RoundingPoints - II</a></li>
+        <li><a href="Earth/index.html">Earth Simulation</a></li>
+      </ul>
+    </div>
+    <div class="cloumn">
+      <span class="group-title">D3</span>
+      <ul>
+        <li><a href="sortSim/sortSim.html">Sort Algorithm</a></li>
+      </ul>
+    </div>
+    <script>
+      var columnCount = $('.cloumn').length;
+      var cloumnWidth = window.innerWidth / columnCount;
+      $('.cloumn').width(cloumnWidth);
+    </script>
+  </body>
 </html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Maze Maker</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
+    <script src="maze.js"></script>
+    <script src="mazeGen.js"></script>
+    <link rel="stylesheet" href="mazeGen.css" />
+    <link rel="stylesheet" href="maze.css" />
+  </head>
+  <body>
+    <div class="col c1">
+      <div id="parameters">
+        Size:
+        <input id="x-size" value="50" style="width:50px;"></input>&nbsp;
+        <input id="y-size" value="30" style="width:50px;"></input>&nbsp;&nbsp;
+        Step Interval (ms): <input id="intv" value="10" style="width:50px;"></input>&nbsp;
+        <input type="checkbox" id="show-step"></input>Show Generation&nbsp;&nbsp;
+        <button id="make">Make It !</button>&nbsp;
+        <button id="optSize">Optimize Size</button>
+      </div>
+    </div>
+    <div class="col c2">
+      <svg id="maze-container" xmlns="http://www.w3.org/2000/svg">
+        <rect id="maze-start" />
+        <rect id="maze-end" />
+        <rect id="maze-curr" />
+        <g id="maze-line-group" />
+      </svg>
+    </div>
+  </body>
+</html>
