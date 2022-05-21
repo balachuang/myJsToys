@@ -35,7 +35,7 @@ div.c2 {
 }
 
 #parameters {
-  font-family: 'Caveat', cursive;
+  font-family: 'Arial', cursive;
   font-size: 14px;
   top: 10px;
   left: 10px;
@@ -72,6 +72,19 @@ div.c2 {
   animation-duration: 3s;
   animation-name: shine;
   animation-iteration-count: infinite;
+}
+
+#maze-line-group {
+  stroke: white;
+  stroke-opacity: 0.5;
+  fill: none;
+  stroke-linecap: round;
+}
+
+#walk-path {
+  stroke: gold;
+  fill: none;
+  stroke-linecap: round;
 }
 
 @keyframes shine {

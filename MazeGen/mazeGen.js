@@ -3,12 +3,14 @@ let svgLines = null;
 let svgStart = null;
 let svgEnd = null;
 let svgCurr = null;
+let svgWalker = null;
 let svgWidth = 0;
 let svgHeight = 0;
 let gridWidth = 0;
 let xOffset = 10;
 let yOffset = 10;
 
+let maze = null;
 
 $(document).ready(initDocuemnt);
 
@@ -20,6 +22,8 @@ function initDocuemnt() {
 	svgStart = $('#maze-start');
 	svgEnd = $('#maze-end');
 	svgCurr = $('#maze-curr');
+	svgWalker = $('#walk-path');
+	svgWalker.hide();
 	svgWidth = svgContainer.width();
 	svgHeight = $(window).height() - 110;
 
@@ -44,11 +48,12 @@ function initDocuemnt() {
 
 		console.log('clean maze');
 		svgContainer.find('line').remove();
+		svgWalker.hide();
 
 		console.log('create a new maze');
 		let x = eval($('#x-size').val());
 		let y = eval($('#y-size').val());
-		let maze = new Maze(
+		maze = new Maze(
 			new MazePos(x, y),
 			new MazePos(0, 0),
 			new MazePos(x - 1, y - 1)
@@ -59,11 +64,8 @@ function initDocuemnt() {
 			(svgHeight - 2 * yOffset) / y
 		));
 		let lineWidth = Math.max(Math.min(Math.floor(0.1 * gridWidth), 10), 1);
-		svgLines.css({
-			'stroke': 'Gold',
-			'stroke-linecap': 'round',
-			'stroke-width': lineWidth,
-		});
+		svgLines.css({ 'stroke-width': lineWidth });
+		svgWalker.css({ 'stroke-width': Math.min(lineWidth * 3, gridWidth) });
 		svgStart.attr({ 'x': -100, y: -100, 'width': gridWidth, 'height': gridWidth });
 		svgEnd.attr({ 'x': -100, y: -100, 'width': gridWidth, 'height': gridWidth });
 		svgCurr.attr({ 'x': -100, y: -100, 'width': gridWidth, 'height': gridWidth });
@@ -76,6 +78,18 @@ function initDocuemnt() {
 		console.log('generate maze');
 		maze.setRenderFnctions(renderMazeSvg, renderGridSvg, beforeRenderSvg, afterRenderSvg);
 		maze.generate();
+	});
+
+	$('#walk').click(function () {
+		svgWalker.attr('d', '');
+		svgWalker.show();
+		if (maze != null) {
+			let walker = new MazeWalker(maze);
+			let intv = eval($('#intv').val());
+			walker.setStepInterval(intv);
+			walker.setRenderFnctions(renderPathSvg);
+			walker.start();
+		}
 	});
 }
 
@@ -135,6 +149,25 @@ function renderGridSvg(mazeGrid) {
 	if (mazeGrid.isStart) svgStart.attr({ 'x': xStart, y: yStart });
 	if (mazeGrid.isEnd) svgEnd.attr({ 'x': xStart, y: yStart });
 	svgCurr.attr({ 'x': xStart, y: yStart });
+}
+
+function renderPathSvg(mazePath) {
+
+	if (mazePath.length <= 0) return;
+
+	// draw lines around this grid
+	let pathStr = '';
+	for (let n = 0; n < mazePath.length; ++n) {
+		let xStart = xOffset + gridWidth * mazePath[n].x;
+		let yStart = yOffset + gridWidth * mazePath[n].y;
+		let xEnd = xStart + gridWidth;
+		let yEnd = yStart + gridWidth;
+		let xPos = (xStart + xEnd) / 2;
+		let yPos = (yStart + yEnd) / 2;
+
+		pathStr += ((n == 0) ? 'M' : 'L') + `${xPos} ${yPos} `;
+	}
+	svgWalker.attr('d', pathStr);
 }
 
 function addSvgLine(id, start, end) {

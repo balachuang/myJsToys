@@ -6,8 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Maze Maker</title>
     <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
-    <script src="maze.js"></script>
     <script src="mazeGen.js"></script>
+    <script src="maze.js"></script>
+    <script src="walk.js"></script>
+    <script src="sleep.js"></script>
     <link rel="stylesheet" href="mazeGen.css" />
     <link rel="stylesheet" href="maze.css" />
   </head>
@@ -16,11 +18,12 @@
       <div id="parameters">
         Size:
         <input id="x-size" value="50" style="width:50px;"></input>&nbsp;
-        <input id="y-size" value="30" style="width:50px;"></input>&nbsp;&nbsp;
+        <input id="y-size" value="30" style="width:50px;"></input>&nbsp;
+        <button id="optSize">Full Size</button>&nbsp;&nbsp;
         Step Interval (ms): <input id="intv" value="10" style="width:50px;"></input>&nbsp;
         <input type="checkbox" id="show-step"></input>Show Generation&nbsp;&nbsp;
-        <button id="make">Make It !</button>&nbsp;
-        <button id="optSize">Optimize Size</button>
+        <button id="make">Make</button>&nbsp;
+        <button id="walk">Walk</button>&nbsp;
       </div>
     </div>
     <div class="col c2">
@@ -28,6 +31,7 @@
         <rect id="maze-start" />
         <rect id="maze-end" />
         <rect id="maze-curr" />
+        <path id="walk-path" marker-end="url(#arrowhead)" />
         <g id="maze-line-group" />
       </svg>
     </div>
