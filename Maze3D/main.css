@@ -19,8 +19,8 @@ div.c2 {
   margin-top: 10px;
 }
 
-#maze-container {
-  border: 1px solid darkgray;
+#3d-container {
+  border: 2px solid darkgray;
   display: block;
   width: 100%;
   padding: 10px;
@@ -50,50 +50,4 @@ div.c2 {
   text-align: center;
   line-height: 150%;
   margin-bottom: 5px;
-}
-
-#maze-curr {
-  fill: white;
-  fill-opacity: 0.8;
-}
-
-#maze-start {
-  fill: yellow;
-  animation-duration: 3s;
-  animation-name: shine;
-  animation-iteration-count: infinite;
-}
-
-#maze-end {
-  fill: red;
-  animation-duration: 3s;
-  animation-name: shine;
-  animation-iteration-count: infinite;
-}
-
-#maze-line-group {
-  stroke: white;
-  stroke-opacity: 0.5;
-  fill: none;
-  stroke-linecap: round;
-}
-
-#walk-path {
-  stroke: gold;
-  fill: none;
-  stroke-linecap: round;
-}
-
-@keyframes shine {
-  from {
-    fill-opacity: 0.2;
-  }
-
-  50% {
-    fill-opacity: 1;
-  }
-
-  to {
-    fill-opacity: 0.2;
-  }
 }
