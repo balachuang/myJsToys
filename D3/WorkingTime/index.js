@@ -4,6 +4,7 @@ let xScale = null;
 let yScale = null;
 let workColorScale = null;
 let restColorScale = null;
+let prevPath = [];
 
 
 $(document).ready(initD3);
@@ -41,10 +42,18 @@ function initD3() {
 	// create an initial path
 	let leftBiAry = getTimeBiAry(biTimeStr);
 	svgObj.append('path')
+		.attr('id', 'primary')
 		.attr('fill', 'none')
 		.attr('stroke', 'white')
 		.attr('stroke-width', '2')
 		.attr('stroke-oopacity', 0.5)
+		.attr('d', drawTimeLine(d3.path(), leftBiAry));
+	svgObj.append('path')
+		.attr('id', 'secondary')
+		.attr('fill', 'none')
+		.attr('stroke', 'none')
+		.attr('stroke-width', '2')
+		.attr('stroke-oopacity', 0.1)
 		.attr('d', drawTimeLine(d3.path(), leftBiAry));
 
 	$('#clockStr').css({
@@ -70,24 +79,29 @@ function updateTimer() {
 	let hrLeft = Math.floor((timeLeft - dyLeft * 86400) / 3600);
 	let miLeft = Math.floor((timeLeft - dyLeft * 86400 - hrLeft * 3600) / 60);
 	let ssLeft = timeLeft - dyLeft * 86400 - hrLeft * 3600 - miLeft * 60;
-	let dyLeft2 = format(dyLeft.toString(2), 4);
-	let hrLeft2 = format(hrLeft.toString(2), 7);
-	let miLeft2 = format(miLeft.toString(2), 7);
-	let ssLeft2 = format(ssLeft.toString(2), 7);
+	let dyLeft2 = dyLeft.toString(2).padStart(4, '0');
+	let hrLeft2 = hrLeft.toString(2).padStart(7, '0');
+	let miLeft2 = miLeft.toString(2).padStart(7, '0');
+	let ssLeft2 = ssLeft.toString(2).padStart(7, '0');
 	let leftBiStr = `${dyLeft2}:${hrLeft2}:${miLeft2}:${ssLeft2}`;
 	let leftBiAry = getTimeBiAry(leftBiStr);
 	let colorB = isWorking ? workColorScale(0) - workColorScale(timeLeft) : restColorScale(timeLeft);
 	let colorY = isWorking ? workColorScale(timeLeft) : restColorScale(0) - restColorScale(timeLeft);
 
 	// draw timer by D3
-	svgObj.select('path')
+	svgObj.select('path#primary')
 		.attr('stroke', `rgba(${colorY},${colorY},${colorB},1)`)
 		.transition()
 		.attr('d', drawTimeLine(d3.path(), leftBiAry));
+	svgObj.select('path#secondary')
+		.attr('stroke', `rgba(${colorY},${colorY},${colorB},0.3)`)
+		.transition()
+		.attr('d', drawTimeLine(d3.path(), prevPath));
+	prevPath = leftBiAry.slice(0);
 
 	let leftStr = isWorking
 		? `You still need to work as a dog for ${dyLeft} days, ${hrLeft} hours, ${miLeft} minutes and ${ssLeft} seconds.`
-		: `You will go back to be a dog after ${dyLeft} days, ${hrLeft} hours, ${miLeft} minutes and ${ssLeft} seconds.`;
+		: `Remaining happy time: ${dyLeft} days, ${hrLeft} hours, ${miLeft} minutes and ${ssLeft} seconds.`;
 	$('#clockStr').text(leftStr);
 }
 
@@ -149,17 +163,13 @@ function drawTimeLine(context, timeStr) {
 	return context;
 }
 
-function format(number, digital) {
-	return ('0000000000' + number).slice(-1 * digital);
-}
-
 function getTimeBiAry(biTimeStr) {
 
 	if (timeStrOffset > 0)
 		biTimeStr =
 			biTimeStr.substring(timeStrOffset) +
 			biTimeStr.substring(0, timeStrOffset);
-	timeStrOffset = (timeStrOffset + 1) % 30;
+	timeStrOffset = (timeStrOffset + 1) % 28;
 
 	biTimeStr = ':' + biTimeStr + ':';
 
