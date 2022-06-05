@@ -4,6 +4,13 @@ let xScale = null;
 let yScale = null;
 let workColorScale = null;
 let restColorScale = null;
+let prevLeftSec = -1;
+
+let showShadow = false;
+let shadowCnt = 5;
+let maxShadow = 0.4;
+let minShadow = 0.01;
+let shadowColor = [];
 let prevPath = [];
 
 
@@ -48,18 +55,42 @@ function initD3() {
 		.attr('stroke-width', '2')
 		.attr('stroke-oopacity', 0.5)
 		.attr('d', drawTimeLine(d3.path(), leftBiAry));
-	svgObj.append('path')
-		.attr('id', 'secondary')
-		.attr('fill', 'none')
-		.attr('stroke', 'none')
-		.attr('stroke-width', '2')
-		.attr('stroke-oopacity', 0.1)
-		.attr('d', drawTimeLine(d3.path(), leftBiAry));
+	for (let n = 0; n < shadowCnt; ++n) {
+		let id = `shadow-${n}`;
+		shadowColor.push('none');
+		prevPath.push([]);
+		svgObj.append('path')
+			.attr('id', id)
+			.attr('fill', 'none')
+			.attr('stroke', shadowColor[n])
+			.attr('stroke-width', '2')
+			.attr('stroke-oopacity', 0.1)
+			.attr('d', drawTimeLine(d3.path(), leftBiAry));
+	}
 
 	$('#clockStr').css({
 		width: lineWidth,
 		left: lineXCent - lineWidth / 2,
 		top: lineYCent + lineHeight / 2 + $('#clockStr').height() / 2
+	});
+	$('#clockDis').css({
+		width: lineWidth,
+		left: lineXCent - lineWidth / 2,
+		top: lineYCent - lineHeight / 2 - $('#clockStr').height() * 1.5
+	});
+	$('#svg-area').mouseenter(function () {
+		showShadow = true;
+		shadowColor.forEach((color, idx) => {
+			let pid = `path#shadow-${idx}`;
+			svgObj.select(pid).attr('stroke', color);
+		});
+	});
+	$('#svg-area').mouseleave(function () {
+		showShadow = false;
+		shadowColor.forEach((color, idx) => {
+			let pid = `path#shadow-${idx}`;
+			svgObj.select(pid).attr('stroke', 'none');
+		});
 	});
 
 	// start timer
@@ -78,7 +109,7 @@ function updateTimer() {
 	let dyLeft = Math.floor(timeLeft / 86400);
 	let hrLeft = Math.floor((timeLeft - dyLeft * 86400) / 3600);
 	let miLeft = Math.floor((timeLeft - dyLeft * 86400 - hrLeft * 3600) / 60);
-	let ssLeft = timeLeft - dyLeft * 86400 - hrLeft * 3600 - miLeft * 60;
+	let ssLeft = Math.floor(timeLeft - dyLeft * 86400 - hrLeft * 3600 - miLeft * 60);
 	let dyLeft2 = dyLeft.toString(2).padStart(4, '0');
 	let hrLeft2 = hrLeft.toString(2).padStart(7, '0');
 	let miLeft2 = miLeft.toString(2).padStart(7, '0');
@@ -93,16 +124,25 @@ function updateTimer() {
 		.attr('stroke', `rgba(${colorY},${colorY},${colorB},1)`)
 		.transition()
 		.attr('d', drawTimeLine(d3.path(), leftBiAry));
-	svgObj.select('path#secondary')
-		.attr('stroke', `rgba(${colorY},${colorY},${colorB},0.3)`)
-		.transition()
-		.attr('d', drawTimeLine(d3.path(), prevPath));
-	prevPath = leftBiAry.slice(0);
+
+	for (let idx = shadowColor.length - 1; idx >= 0; --idx) {
+		let pid = `path#shadow-${idx}`;
+		let opps = maxShadow - (idx + 1) * (maxShadow - minShadow) / shadowColor.length;
+		shadowColor[idx] = `rgba(${colorY},${colorY},${colorB},${opps})`;
+		svgObj.select(pid)
+			.attr('stroke', showShadow ? shadowColor[idx] : 'none')
+			.transition()
+			.attr('d', drawTimeLine(d3.path(), prevPath[idx]));
+		prevPath[idx] = (idx == 0) ? leftBiAry.slice(0) : prevPath[idx - 1].slice(0);
+	}
 
 	let leftStr = isWorking
 		? `You still need to work as a dog for ${dyLeft} days, ${hrLeft} hours, ${miLeft} minutes and ${ssLeft} seconds.`
 		: `Remaining happy time: ${dyLeft} days, ${hrLeft} hours, ${miLeft} minutes and ${ssLeft} seconds.`;
 	$('#clockStr').text(leftStr);
+	$('#clockDis').text(leftBiStr);
+
+	prevLeftSec = ssLeft;
 }
 
 function getEndTime() {
