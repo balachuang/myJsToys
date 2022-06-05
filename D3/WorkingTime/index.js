@@ -8,9 +8,8 @@ let prevLeftSec = -1;
 
 let showShadow = false;
 let shadowCnt = 5;
-let maxShadow = 0.4;
+let maxShadow = 0.5;
 let minShadow = 0.01;
-let shadowColor = [];
 let prevPath = [];
 
 
@@ -57,13 +56,12 @@ function initD3() {
 		.attr('d', drawTimeLine(d3.path(), leftBiAry));
 	for (let n = 0; n < shadowCnt; ++n) {
 		let id = `shadow-${n}`;
-		shadowColor.push('none');
 		prevPath.push([]);
 		svgObj.append('path')
 			.attr('id', id)
 			.attr('fill', 'none')
-			.attr('stroke', shadowColor[n])
-			.attr('stroke-width', '2')
+			.attr('stroke', 'none')
+			.attr('stroke-width', '0')
 			.attr('stroke-oopacity', 0.1)
 			.attr('d', drawTimeLine(d3.path(), leftBiAry));
 	}
@@ -80,17 +78,11 @@ function initD3() {
 	});
 	$('#svg-area').mouseenter(function () {
 		showShadow = true;
-		shadowColor.forEach((color, idx) => {
-			let pid = `path#shadow-${idx}`;
-			svgObj.select(pid).attr('stroke', color);
-		});
+		prevPath.forEach((p, idx) => svgObj.select(`path#shadow-${idx}`).attr('stroke-width', '2'));
 	});
 	$('#svg-area').mouseleave(function () {
 		showShadow = false;
-		shadowColor.forEach((color, idx) => {
-			let pid = `path#shadow-${idx}`;
-			svgObj.select(pid).attr('stroke', 'none');
-		});
+		prevPath.forEach((p, idx) => svgObj.select(`path#shadow-${idx}`).attr('stroke-width', '0'));
 	});
 
 	// start timer
@@ -125,12 +117,12 @@ function updateTimer() {
 		.transition()
 		.attr('d', drawTimeLine(d3.path(), leftBiAry));
 
-	for (let idx = shadowColor.length - 1; idx >= 0; --idx) {
+	for (let idx = prevPath.length - 1; idx >= 0; --idx) {
 		let pid = `path#shadow-${idx}`;
-		let opps = maxShadow - (idx + 1) * (maxShadow - minShadow) / shadowColor.length;
-		shadowColor[idx] = `rgba(${colorY},${colorY},${colorB},${opps})`;
+		let opps = maxShadow - (idx + 1) * (maxShadow - minShadow) / prevPath.length;
+		let color = `rgba(${colorY},${colorY},${colorB},${opps})`;
 		svgObj.select(pid)
-			.attr('stroke', showShadow ? shadowColor[idx] : 'none')
+			.attr('stroke', color)
 			.transition()
 			.attr('d', drawTimeLine(d3.path(), prevPath[idx]));
 		prevPath[idx] = (idx == 0) ? leftBiAry.slice(0) : prevPath[idx - 1].slice(0);
