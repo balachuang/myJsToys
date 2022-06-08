@@ -13,10 +13,24 @@ body {
 
 #lens {
   fill: none;
-  stroke: rgb(40, 100, 40);
+  stroke: url(#lens-gradion);
+  stroke-opacity: 0.3;
   stroke-width: 10;
 }
 .crontol-lens {
-  fill: rgb(40, 100, 40);
+  fill: url(#control-gradion);
+  fill-opacity: 0.3;
   stroke: none;
+}
+.stop0 {
+  stop-color: rgb(40, 40, 100);
+}
+.stop1 {
+  stop-color: rgb(200, 200, 255);
+}
+.stop2 {
+  stop-color: rgb(150, 150, 200);
+}
+.stop3 {
+  stop-color: rgb(40, 40, 100);
 }

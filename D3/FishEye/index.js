@@ -219,6 +219,18 @@ function ptInBox(p, box) {
 }
 
 function initLensHandler() {
+	$('circle').mouseover(function () {
+		svgLens.transition().style('stroke-opacity', 1);
+		svgMove.transition().style('fill-opacity', 1);
+		svgSize.transition().style('fill-opacity', 1);
+		svgEffc.transition().style('fill-opacity', 1);
+	});
+	$('circle').mouseleave(function () {
+		svgLens.transition().style('stroke-opacity', 0.3);
+		svgMove.transition().style('fill-opacity', 0.3);
+		svgSize.transition().style('fill-opacity', 0.3);
+		svgEffc.transition().style('fill-opacity', 0.3);
+	});
 	$('#moveCtrl').mousedown(function (e) {
 		moveLens = true;
 		moveStart = {
