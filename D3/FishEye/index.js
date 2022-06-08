@@ -18,6 +18,7 @@ let contolerR = 15;
 let effectRange = 1.1;
 let effectRatio = 0.5;
 let segCnt = 50;
+let segMaxLength = 10;
 
 let moveLens = false;
 let zoomLens = false;
@@ -51,56 +52,11 @@ function initD3() {
 	drawGrids();
 }
 
-function drawFishEyeRect(context, x, y) {
-
-	let effecBox = {
-		minX: lensParam.x - lensParam.r * effectRange,
-		maxX: lensParam.x + lensParam.r * effectRange,
-		minY: lensParam.y - lensParam.r * effectRange,
-		maxY: lensParam.y + lensParam.r * effectRange
-	}
-
-	let x1 = x * rectSize;
-	let y1 = y * rectSize;
-	let x2 = (x + 1) * rectSize;
-	let y2 = (y + 1) * rectSize;
-	let p = [];
-	p.push({ x: x1, y: y1 });
-	p.push({ x: x2, y: y1 });
-	p.push({ x: x2, y: y2 });
-	p.push({ x: x1, y: y2 });
-
-	if (gridTouchBox(p, effecBox) && gridTouchLens(p)) {
-		// console.log('calculate p deform');
-		let ps = calculateLensEffect(p[0]);
-		context.moveTo(ps.x, ps.y);
-		for (let n = 0; n < 4; ++n) {
-			let pS = p[n];
-			let pE = p[(n + 1) % 4];
-			let pDif = { x: (pE.x - pS.x) / segCnt, y: (pE.y - pS.y) / segCnt };
-			for (let s = 0; s < segCnt; ++s) {
-				let pDef = {
-					x: pS.x + pDif.x * (s + 1),
-					y: pS.y + pDif.y * (s + 1)
-				};
-				pDef = calculateLensEffect(pDef);
-				context.lineTo(pDef.x, pDef.y);
-			}
-		}
-	} else {
-		context.moveTo(p[0].x, p[0].y);
-		context.lineTo(p[1].x, p[1].y);
-		context.lineTo(p[2].x, p[2].y);
-		context.lineTo(p[3].x, p[3].y);
-		context.closePath();
-	}
-
-	return context;
-}
-
 function drawGrids() {
 	let svgGrids = d3.select('#grids');
 	svgGrids.selectAll('path').remove();
+	// let x = 5;
+	// let y = 4;
 	for (let x = 0; x < rectXCnt; ++x) {
 		for (let y = 0; y < rectYCnt; ++y) {
 			let c = 255 * ((x + y) % 2);
@@ -133,7 +89,93 @@ function drawLens() {
 	svgEffc.attr('cx', ex).attr('cy', ey);
 }
 
-function calculateLensEffect(p) {
+function drawFishEyeRect(context, x, y) {
+
+	let effecBox = {
+		minX: lensParam.x - lensParam.r * effectRange,
+		maxX: lensParam.x + lensParam.r * effectRange,
+		minY: lensParam.y - lensParam.r * effectRange,
+		maxY: lensParam.y + lensParam.r * effectRange
+	}
+
+	let x1 = x * rectSize;
+	let y1 = y * rectSize;
+	let x2 = (x + 1) * rectSize;
+	let y2 = (y + 1) * rectSize;
+	let p = [];
+	p.push({ x: x1, y: y1 });
+	p.push({ x: x2, y: y1 });
+	p.push({ x: x2, y: y2 });
+	p.push({ x: x1, y: y2 });
+
+	if (gridTouchBox(p, effecBox) && gridTouchLens(p)) {
+		for (let n = 0; n < 4; ++n) {
+			let defPtAry = deformLine(p[n], p[(n + 1) % 4]);
+			if (n == 0) context.moveTo(defPtAry[0].x, defPtAry[0].y);
+			defPtAry.forEach((pt, idx) => {
+				if (idx > 0) context.lineTo(pt.x, pt.y);
+			});
+		}
+	} else {
+		context.moveTo(p[0].x, p[0].y);
+		context.lineTo(p[1].x, p[1].y);
+		context.lineTo(p[2].x, p[2].y);
+		context.lineTo(p[3].x, p[3].y);
+		context.closePath();
+	}
+
+	return context;
+}
+
+// calculate lens effect of a line
+// return a point array of result curve 
+function deformLine(p1, p2) {
+
+	// process special case to avoid recursive crash
+	if ((lensParam.x == p1.x) && (lensParam.x == p2.x)) {
+		let ptAry = [];
+		ptAry.push(p1);
+		ptAry.push(p2);
+		return ptAry;
+	}
+
+	// split p1 ~ p2 into ${segCnt} segments
+	let segCnt = 5;
+	let xDif = p2.x - p1.x;
+	let yDif = p2.y - p1.y;
+	let ptSegs = [];
+	for (let n = 0; n <= segCnt; ++n) {
+		ptSegs.push({
+			x: p1.x + n * xDif / segCnt,
+			y: p1.y + n * yDif / segCnt
+		});
+	}
+
+	// calculate interpolation of each segments
+	let ptAry = [];
+	for (let n = 0; n < segCnt; ++n) {
+		let orgP1 = ptSegs[n];
+		let orgP2 = ptSegs[n + 1];
+		let defP1 = deformPoint(orgP1);
+		let defP2 = deformPoint(orgP2);
+		xDif = defP1.x - defP2.x;
+		yDif = defP1.y - defP2.y;
+		let length = Math.sqrt(xDif * xDif + yDif * yDif);
+		if (length > segMaxLength) {
+			let defPtAry = deformLine(orgP1, orgP2);
+			if (n == 0) ptAry.push(defPtAry[0]);
+			ptAry = ptAry.concat(defPtAry.slice(1));
+		} else {
+			if (n == 0) ptAry.push(defP1);
+			ptAry.push(defP2);
+		}
+	}
+
+	return ptAry;
+}
+
+// calculate lens effect of a single point
+function deformPoint(p) {
 
 	let xDis = p.x - lensParam.x;
 	let yDis = p.y - lensParam.y;
