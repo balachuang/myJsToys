@@ -1,0 +1,36 @@
+body {
+  background-color: rgb(36, 37, 38);
+  color: white;
+}
+
+#svg-area {
+  display: block;
+  position: fixed;
+  margin: 0px;
+  padding: 0px;
+  border: 1px solid rgba(100, 100, 100, 0.5);
+}
+
+#lens {
+  fill: none;
+  stroke: url(#lens-gradion);
+  stroke-opacity: 0.3;
+  stroke-width: 10;
+}
+.crontol-lens {
+  fill: url(#control-gradion);
+  fill-opacity: 0.3;
+  stroke: none;
+}
+.stop0 {
+  stop-color: rgb(40, 40, 100);
+}
+.stop1 {
+  stop-color: rgb(200, 200, 255);
+}
+.stop2 {
+  stop-color: rgb(150, 150, 200);
+}
+.stop3 {
+  stop-color: rgb(40, 40, 100);
+}
