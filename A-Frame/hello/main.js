@@ -1,6 +1,6 @@
 let aFrameScene = null;
 let circleRadius = 3;
-let BoradCnt = 9;
+let ObjectCnt = 9;
 
 $(document).ready(function () {
 	aFrameScene = $('#af-main-scene');
@@ -9,13 +9,13 @@ $(document).ready(function () {
 });
 
 function init3DScene() {
-	for (let n = 0; n < BoradCnt; ++n) {
-		let angleD = 180 + 360 * n / BoradCnt;
+	for (let n = 0; n < ObjectCnt; ++n) {
+		let angleD = 180 + 360 * n / ObjectCnt;
 		let angleR = angleD * Math.PI / 180;
 		let boxX = circleRadius * Math.sin(angleR);
 		let boxZ = circleRadius * Math.cos(angleR);
-		let txtX = (circleRadius + 2) * Math.sin(angleR);
-		let txtZ = (circleRadius + 2) * Math.cos(angleR);
+		let turX = (circleRadius + 2) * Math.sin(angleR);
+		let turZ = (circleRadius + 2) * Math.cos(angleR);
 
 		$('<a-box>').appendTo(aFrameScene)
 			.attr({
@@ -30,7 +30,7 @@ function init3DScene() {
 			});
 		$('<a-torus-knot>').appendTo(aFrameScene)
 			.attr({
-				'position': `${txtX} 1.5 ${txtZ}`,
+				'position': `${turX} 1.5 ${turZ}`,
 				'rotation': `0 ${angleD} 0`,
 				'radius': '0.5',
 				'metalness': '1',
