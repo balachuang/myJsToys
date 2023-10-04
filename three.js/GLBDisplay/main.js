@@ -101,6 +101,7 @@ function init3D() {
 	});
 
 	// create controller
+	// OrbitControls - 提供放大. 縮小, 平移, 旋轉功能
 	controls = new OrbitControls(camera, labelRenderer.domElement);
 	controls.enableDamping = true;
 	controls.dampingFactor = 0.05;
@@ -156,6 +157,9 @@ function loadGLB(path) {
 		xzSize = Math.max(Math.max(maxDim.x - minDim.x, maxDim.y - minDim.y), maxDim.z - minDim.z);
 		createXZPlane();
 		createDimension();
+
+		camera.position.set(10, 10, 10);
+		camera.lookAt(0, 0, 0);
 	}, undefined, function (error) {
 		console.error(error);
 	});
@@ -236,7 +240,6 @@ function createDimension() {
 	zDimGroup.position.set(-1.5 * glbObj.maxDim.x, 0, (glbObj.maxDim.z + glbObj.minDim.z) / 2);
 	dimObj.push(zDimGroup);
 	scene.add(zDimGroup);
-
 }
 
 function createDimensionLine(isZ, lineWidth, markLength, textSize, lineLength, minStr, maxStr, lenStr) {

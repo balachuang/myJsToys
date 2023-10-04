@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Hexagon Grid</title>
+	<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
+	<script src="hexagonGrid.js"></script>
+	<link rel="stylesheet" href="hexagonGrid.css">
+	<script>
+	</script>
+</head>
+<body>
+	<span id="control-panel">
+		Hexagon Direction:
+		<select id="hezagon-dir">
+			<option value="stand" selected>Stand</option>
+			<option value="lieDn">Lie Down</option>
+		</select>&nbsp;&nbsp;
+		Hexagon Size (px):
+		<input type="number" id="hexagon-size" value="10" min="1">&nbsp;&nbsp;
+		Grid Interval (px):
+		<input type="number" id="grid-interval" value="3">
+	</span>
+	<div id="svg-container">
+		<svg id="svg-area" xmlns="http://www.w3.org/2000/svg"></svg>
+	</div>
+	<script src="../../simpleControlPanel.js"></script>
+</body>
+</html>
