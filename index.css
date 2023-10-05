@@ -1,0 +1,26 @@
+body {
+  background-color: rgb(36, 37, 38);
+}
+
+li {
+  color: orange;
+  font-family: 'Kalam', cursive;
+  font-size: 22px;
+}
+
+a {
+  color: lightgray;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.group-title {
+  color: orange;
+  font-family: 'Kalam', cursive;
+  font-size: 22px;
+}
+
+/* .cloumn {
+  float: left;
+  max-width: 250px;
+} */

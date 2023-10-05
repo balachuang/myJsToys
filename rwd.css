@@ -1,0 +1,41 @@
+/* focus on div */
+div[class^="col-"] {
+  float: left;
+}
+
+/* for mobile phones */
+@media only screen and (max-width: 600px) {
+  div[class^="col-"] { width: 100%; }
+}
+
+/* for desktop */
+@media only screen and (min-width: 600px) {
+  div.col-1  { width: 8.33%; }
+  div.col-2  { width: 16.66%; }
+  div.col-3  { width: 25%; }
+  div.col-4  { width: 33.33%; }
+  div.col-5  { width: 41.66%; }
+  div.col-6  { width: 50%; }
+  div.col-7  { width: 58.33%; }
+  div.col-8  { width: 66.66%; }
+  div.col-9  { width: 75%; }
+  div.col-10 { width: 83.33%; }
+  div.col-11 { width: 91.66%; }
+  div.col-12 { width: 100%; }
+}
+
+/* for tablets */
+@media only screen and (min-width: 600px) {
+  div.col-s-1  { width: 8.33%; }
+  div.col-s-2  { width: 16.66%; }
+  div.col-s-3  { width: 25%; }
+  div.col-s-4  { width: 33.33%; }
+  div.col-s-5  { width: 41.66%; }
+  div.col-s-6  { width: 50%; }
+  div.col-s-7  { width: 58.33%; }
+  div.col-s-8  { width: 66.66%; }
+  div.col-s-9  { width: 75%; }
+  div.col-s-10 { width: 83.33%; }
+  div.col-s-11 { width: 91.66%; }
+  div.col-s-12 { width: 100%; }
+}
