@@ -79,7 +79,7 @@ function animate() {
 function createEarth()
 {
 	// earth texture - Day
-	const earthDayTexture = new THREE.TextureLoader().load('./Texture/Earth_Day.png');
+	const earthDayTexture = new THREE.TextureLoader().load('./Texture/Earth_Day.jpg');
 	const earthDayMaterial = new THREE.MeshBasicMaterial({
 		map: earthDayTexture,
 		alphaMap: earthDayAlphaTexture,
@@ -89,7 +89,7 @@ function createEarth()
 	earthDayMaterial.map.repeat.x = 1;
 
 	// earth texture - Night
-	const earthNightTexture = new THREE.TextureLoader().load('./Texture/Earth_Night.png');
+	const earthNightTexture = new THREE.TextureLoader().load('./Texture/Earth_Night.jpg');
 	const earthNightMaterial = new THREE.MeshBasicMaterial({
 		map: earthNightTexture,
 		alphaMap: earthNightAlphaTexture,
@@ -99,7 +99,7 @@ function createEarth()
 	earthNightMaterial.map.repeat.x = 1;
 
 	// cloud texture
-	const cloudTexture = new THREE.TextureLoader().load('./Texture/Cloud.png');
+	const cloudTexture = new THREE.TextureLoader().load('./Texture/Cloud.jpg');
 	const cloudMaterial = new THREE.MeshBasicMaterial({
 		map: cloudTexture,
 		alphaMap: cloudTexture,
