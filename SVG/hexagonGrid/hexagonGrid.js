@@ -5,6 +5,7 @@ const margin = 10;
 
 let hexSize = 10;
 let hexDist = 3;
+let isStanding = true;
 let hexCenterArray = null;
 
 let ViewDim = { x: 0, y: 0 };
@@ -13,9 +14,10 @@ let cursorPox = { x: 0, y: 0 }
 
 $(document).ready(function()
 {
-	$('input').change(function(){
-		calculateHexagon();
-		createSvgHexagons();
+	$('.hex-config').change(function(){
+		isStanding = ($('#hezagon-dir').val() == 'stand');
+		calculateHexagonCount();
+		createHexagonsSvg();
 		setCursor();
 		$(this).blur();
 	});
@@ -27,6 +29,8 @@ $(document).ready(function()
 		y: window.innerHeight - 2*margin - 40
 	};
 
+	isStanding = ($('#hezagon-dir').val() == 'stand');
+
 	$('#svg-container').css({width: ViewDim.x, height: ViewDim.y });
 	$('#svg-area').attr({
 		'width'   : ViewDim.x,
@@ -34,13 +38,19 @@ $(document).ready(function()
 		'viewBox' : `0 0 ${ViewDim.x} ${ViewDim.y}`
 	});
 
-	calculateHexagon();
-	createSvgHexagons();
+	calculateHexagonCount();
+	createHexagonsSvg();
 	setCursor();
 });
 
-// pre-calculate all positions of hexagons center
-function calculateHexagon()
+function calculateHexagonCount()
+{
+	if (isStanding) calculateHexagonForStand();
+	else			calculateHexagonForLieDn();
+}
+
+// pre-calculate all positions of hexagons center (when hezagons are standing)
+function calculateHexagonForStand()
 {
 	hexSize = eval($('#hexagon-size').val());
 	hexDist = eval($('#hexagon-dist').val());
@@ -77,8 +87,46 @@ function calculateHexagon()
 	}
 }
 
-// update or generate hexagons
-function createSvgHexagons()
+// pre-calculate all positions of hexagons center (when hezagons are lie down)
+function calculateHexagonForLieDn()
+{
+	hexSize = eval($('#hexagon-size').val());
+	hexDist = eval($('#hexagon-dist').val());
+	let rcos30 = hexSize * cos30;
+	let rcos60 = hexSize * cos60;
+	let dcos30 = hexDist * cos30;
+
+	// calculate hexagon count
+	hexCount.x = Math.floor(1 + (ViewDim.x - 2*hexSize) / (hexSize + rcos60 + dcos30));
+	hexCount.y = Math.floor((ViewDim.y + hexDist - rcos30) / (2*rcos30 + hexDist));
+
+	// prepare positions
+	let posX = new Array(hexCount.x);
+	let posY_Od = new Array(hexCount.y);
+	let posY_Ev = new Array(hexCount.y);
+
+	posY_Ev[0] = rcos30;
+	posY_Od[0] = 2 * rcos30 + hexDist/2;
+	for (let i=1; i<hexCount.y; ++i) {
+		posY_Ev[i] = posY_Ev[i-1] + hexDist + 2*rcos30;
+		posY_Od[i] = posY_Od[i-1] + hexDist + 2*rcos30;
+	}
+	for (let i=0; i<hexCount.x; ++i) posX[i] = hexSize + i * (rcos60 + dcos30 + hexSize);
+
+	// calculate hexagon center position
+	hexCenterArray = get2DArray(hexCount.x, hexCount.y);
+	for (let i=0; i<hexCount.x; ++i) {
+		for (let j=0; j<hexCount.y; ++j) {
+			hexCenterArray[i][j] = {
+				x: posX[i],
+				y: (i%2) ? posY_Od[j] : posY_Ev[j]
+			};
+		}
+	}
+}
+
+// update or generate hexagons SVG
+function createHexagonsSvg()
 {
 	$('#svg-area polygon').addClass('old-hex');
 	for (let i=0; i<hexCount.x; ++i) {
@@ -102,12 +150,31 @@ function createSvgHexagons()
 
 function getHexVertexString(c)
 {
+	if (isStanding) return getHexVertexStringForStand(c);
+	else			return getHexVertexStringForLieDn(c);
+}
+
+function getHexVertexStringForStand(c)
+{
 	let v1 = {x: c.x + hexSize * cos30, y: c.y - hexSize * sin30};
 	let v2 = {x: c.x,                   y: c.y - hexSize};
 	let v3 = {x: c.x - hexSize * cos30, y: c.y - hexSize * sin30};
 	let v4 = {x: c.x - hexSize * cos30, y: c.y + hexSize * sin30};
 	let v5 = {x: c.x,                   y: c.y + hexSize};
 	let v6 = {x: c.x + hexSize * cos30, y: c.y + hexSize * sin30};
+
+	// user `` to format string by variables
+	return `${v1.x},${v1.y} ${v2.x},${v2.y} ${v3.x},${v3.y} ${v4.x},${v4.y} ${v5.x},${v5.y} ${v6.x},${v6.y}`;
+}
+
+function getHexVertexStringForLieDn(c)
+{
+	let v1 = {x: c.x + hexSize,         y: c.y};
+	let v2 = {x: c.x + hexSize * sin30, y: c.y - hexSize * cos30};
+	let v3 = {x: c.x - hexSize * sin30, y: c.y - hexSize * cos30};
+	let v4 = {x: c.x - hexSize,         y: c.y};
+	let v5 = {x: c.x - hexSize * sin30, y: c.y + hexSize * cos30};
+	let v6 = {x: c.x + hexSize * sin30, y: c.y + hexSize * cos30};
 
 	// user `` to format string by variables
 	return `${v1.x},${v1.y} ${v2.x},${v2.y} ${v3.x},${v3.y} ${v4.x},${v4.y} ${v5.x},${v5.y} ${v6.x},${v6.y}`;
@@ -130,16 +197,26 @@ function keyEventHandler(e)
 			cursorPox.y = Math.min(cursorPox.y + 1, hexCount.y - 1);
 			break;
 		case 97: // numpad 1
-			cursorPox.x = (cursorPox.y % 2) ? cursorPox.x : Math.max(cursorPox.x - 1, 0);
-			cursorPox.y = Math.min(cursorPox.y + 1, hexCount.y - 1);
+			if (isStanding) {
+				cursorPox.x = (cursorPox.y % 2) ? cursorPox.x : Math.max(cursorPox.x - 1, 0);
+				cursorPox.y = Math.min(cursorPox.y + 1, hexCount.y - 1);
+			}else{
+				cursorPox.x = Math.max(cursorPox.x - 1, 0);
+				cursorPox.y = (cursorPox.x % 2) ? cursorPox.y : Math.min(cursorPox.y + 1, hexCount.y - 1);
+			}
 			break;
 		case 98: // numpad 2
 			// useless in standing mode
 			cursorPox.y = Math.min(cursorPox.y + 1, hexCount.y - 1);
 			break;
 		case 99: // numpad 3
-			cursorPox.x = (cursorPox.y % 2) ? Math.min(cursorPox.x + 1, hexCount.x - 1) : cursorPox.x;
-			cursorPox.y = Math.min(cursorPox.y + 1, hexCount.y - 1);
+			if (isStanding) {
+				cursorPox.x = (cursorPox.y % 2) ? Math.min(cursorPox.x + 1, hexCount.x - 1) : cursorPox.x;
+				cursorPox.y = Math.min(cursorPox.y + 1, hexCount.y - 1);
+			}else{
+				cursorPox.x = Math.min(cursorPox.x + 1, hexCount.x - 1);
+				cursorPox.y = (cursorPox.x % 2) ? cursorPox.y : Math.min(cursorPox.y + 1, hexCount.y - 1);
+			}
 			break;
 		case 100: // numpad 4
 			cursorPox.x = Math.max(cursorPox.x - 1, 0);
@@ -151,16 +228,26 @@ function keyEventHandler(e)
 			cursorPox.x = Math.min(cursorPox.x + 1, hexCount.x - 1);
 			break;
 		case 103: // numpad 7
-			cursorPox.x = (cursorPox.y % 2) ? cursorPox.x : Math.max(cursorPox.x - 1, 0);
-			cursorPox.y = Math.max(cursorPox.y - 1, 0);
+			if (isStanding) {
+				cursorPox.x = (cursorPox.y % 2) ? cursorPox.x : Math.max(cursorPox.x - 1, 0);
+				cursorPox.y = Math.max(cursorPox.y - 1, 0);
+			}else{
+				cursorPox.x = Math.max(cursorPox.x - 1, 0);
+				cursorPox.y = (cursorPox.x % 2) ? Math.max(cursorPox.y - 1, 0) : cursorPox.y;
+			}
 			break;
 		case 104: // numpad 8
 			// useless in standing mode
 			cursorPox.y = Math.max(cursorPox.y - 1, 0);
 			break;
 		case 105: // numpad 9
-			cursorPox.x = (cursorPox.y % 2) ? Math.min(cursorPox.x + 1, hexCount.x - 1) : cursorPox.x;
-			cursorPox.y = Math.max(cursorPox.y - 1, 0);
+			if (isStanding) {
+				cursorPox.x = (cursorPox.y % 2) ? Math.min(cursorPox.x + 1, hexCount.x - 1) : cursorPox.x;
+				cursorPox.y = Math.max(cursorPox.y - 1, 0);
+			}else{
+				cursorPox.x = Math.min(cursorPox.x + 1, hexCount.x - 1);
+				cursorPox.y = (cursorPox.x % 2) ? Math.max(cursorPox.y - 1, 0) : cursorPox.y;
+			}
 			break;
 	}
 	setCursor();

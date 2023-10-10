@@ -14,18 +14,17 @@
 <body>
 	<span id="control-panel">
 		Hexagon Direction:
-		<select id="hezagon-dir">
+		<select id="hezagon-dir" class="hex-config">
 			<option value="stand" selected>Stand</option>
 			<option value="lieDn">Lie Down</option>
 		</select>&nbsp;&nbsp;
 		Hexagon Size (px):
-		<input type="number" id="hexagon-size" value="10" min="1">&nbsp;&nbsp;
+		<input type="number" class="hex-config" id="hexagon-size" value="10" min="1">&nbsp;&nbsp;
 		Grid Interval (px):
-		<input type="number" id="hexagon-dist" value="3">
+		<input type="number" class="hex-config" id="hexagon-dist" value="3">
 	</span>
 	<div id="svg-container">
 		<svg id="svg-area" xmlns="http://www.w3.org/2000/svg"></svg>
 	</div>
-	<!-- <script src="../../simpleControlPanel.js"></script> -->
 </body>
 </html>
