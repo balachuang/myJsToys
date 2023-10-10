@@ -31,7 +31,7 @@ $(document).ready(function()
 	$('#svg-area').attr({
 		'width'   : ViewDim.x,
 		'height'  : ViewDim.y,
-		'viewBox' : formatStr('{} {} {} {}', 0, 0, ViewDim.x, ViewDim.y)
+		'viewBox' : `0 0 ${ViewDim.x} ${ViewDim.y}`
 	});
 
 	calculateHexagon();
@@ -66,7 +66,6 @@ function calculateHexagon()
 	for (let i=0; i<hexCount.y; ++i) posY[i] = hexSize + i * (rcos60 + dcos30 + hexSize);
 
 	// calculate hexagon center position
-	// hexCenterArray = new Array(hexCount.x).fill(new Array(hexCount.y)); // da me
 	hexCenterArray = get2DArray(hexCount.x, hexCount.y);
 	for (let i=0; i<hexCount.x; ++i) {
 		for (let j=0; j<hexCount.y; ++j) {
@@ -86,7 +85,7 @@ function createSvgHexagons()
 		for (let j=0; j<hexCount.y; ++j) {
 			// prepare hexagon vertex
 			let hexVertPath = getHexVertexString(hexCenterArray[i][j]);
-			let hexId = formatStr('hex_{}_{}', i, j);
+			let hexId = `hex_${i}_${j}`;
 			if ($('#' + hexId).length > 0) {
 				$('#' + hexId).attr('points', hexVertPath);
 				$('#' + hexId).addClass('new-hex');
@@ -110,14 +109,8 @@ function getHexVertexString(c)
 	let v5 = {x: c.x,                   y: c.y + hexSize};
 	let v6 = {x: c.x + hexSize * cos30, y: c.y + hexSize * sin30};
 
-	return formatStr(
-		'{},{} {},{} {},{} {},{} {},{} {},{}',
-		v1.x, v1.y,
-		v2.x, v2.y,
-		v3.x, v3.y,
-		v4.x, v4.y,
-		v5.x, v5.y,
-		v6.x, v6.y);
+	// user `` to format string by variables
+	return `${v1.x},${v1.y} ${v2.x},${v2.y} ${v3.x},${v3.y} ${v4.x},${v4.y} ${v5.x},${v5.y} ${v6.x},${v6.y}`;
 }
 
 function keyEventHandler(e)
@@ -178,22 +171,13 @@ function setCursor()
 	cursorPox.x = Math.min(cursorPox.x, hexCount.x - 1);
 	cursorPox.y = Math.min(cursorPox.y, hexCount.y - 1);
 	$('#svg-area polygon.cursor').removeClass('cursor');
-	$('#' + formatStr('hex_{}_{}', cursorPox.x, cursorPox.y)).addClass('cursor');
+	$(`#hex_${cursorPox.x}_${cursorPox.y}`).addClass('cursor');
 }
 
 function makeSVG(tag, attrs) {
 	var el= document.createElementNS('http://www.w3.org/2000/svg', tag);
 	for (var k in attrs) el.setAttribute(k, attrs[k]);
 	return el;
-}
-
-function formatStr(template, ...values)
-{
-	let result = template;
-	values.forEach(function(value){
-		result = result.replace('{}', value);
-	});
-	return result;
 }
 
 function get2DArray(x, y)
