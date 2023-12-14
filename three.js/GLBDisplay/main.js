@@ -61,7 +61,7 @@ function init3D() {
 	// create camera
 	let screenRatio = sceneWidth / sceneHeight;
 	camera = new THREE.PerspectiveCamera(45, screenRatio, 0.01, 10000);
-	camera.position.set(100, 100, 100);
+	camera.position.set(0, 0, 100);
 	camera.lookAt(0, 0, 0);
 
 	// create X-Z plane
@@ -158,7 +158,8 @@ function loadGLB(path) {
 		createXZPlane();
 		createDimension();
 
-		camera.position.set(10, 10, 10);
+		//camera.position.set(10, 10, 10);
+		camera.position.set(10, 10, -10);
 		camera.lookAt(0, 0, 0);
 	}, undefined, function (error) {
 		console.error(error);
@@ -181,7 +182,8 @@ function createXZPlane() {
 
 	// modify camera position according to the plane size
 	let cameraPos = xzSize / 2;
-	camera.position.set(0, cameraPos, cameraPos);
+	//camera.position.set(0, cameraPos, cameraPos);
+	camera.position.set(0, 0, cameraPos);
 	camera.lookAt(0, 0, 0);
 }
 

@@ -1,13 +1,16 @@
 // =========================================================== import objects
 import * as THREE from 'three';
-import { Vector3 } from 'three';
+import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
+import { FirstPersonControls } from 'https://threejs.org/examples/jsm/controls/FirstPersonControls.js';
 import { PointerLockControls } from 'https://threejs.org/examples/jsm/controls/PointerLockControls.js';
 import { GLTFLoader } from 'https://threejs.org/examples/jsm/loaders/GLTFLoader.js';
-// import { RGBELoader } from 'https://threejs.org/examples/jsm/loaders/RGBELoader.js';
 import { CSS2DRenderer, CSS2DObject } from 'https://threejs.org/examples/jsm/renderers/CSS2DRenderer.js';
 import { Font } from 'https://threejs.org/examples/jsm/loaders/FontLoader.js';
 import { TTFLoader } from 'https://threejs.org/examples/jsm/loaders/TTFLoader.js';
-import { TextGeometry } from 'https://threejs.org/examples/jsm/geometries/TextGeometry.js';
+
+// import { Vector3 } from 'three';
+// import { RGBELoader } from 'https://threejs.org/examples/jsm/loaders/RGBELoader.js';
+// import { TextGeometry } from 'https://threejs.org/examples/jsm/geometries/TextGeometry.js';
 
 // =========================================================== Calculate High
 let sceneWidth = window.innerWidth - 255;
@@ -16,59 +19,51 @@ let sceneHeight = window.innerHeight - 45;
 $('#three').width(sceneWidth);
 $('.cols').height(sceneHeight);
 
-let fonts = [
-	'https://threejs.org/examples/fonts/helvetiker_normal.typeface.json',
-	'https://threejs.org/examples/fonts/optimer_normal.typeface.json',
-	'https://threejs.org/examples/fonts/gentilis_normal.typeface.json',
-	'https://threejs.org/examples/fonts/droid/droid_sans_normal.typeface.json',
-	'https://threejs.org/examples/fonts/droid/droid_serif_normal.typeface.json'
-];
-
 // =========================================================== 3D
+const initViewerPos = new THREE.Vector3(50, 1.8, 0);
+
 let camera = null;
 let scene = null;
 let renderer = null;
-let material = null;
 let dimMaterial = null;
 let controls = null;
 let labelRenderer = null;
 let labelFont = null;
 let objLoader = null;
 let glbObj = { loaded: false };
-let dimObj = [];
 let clock = null;
 
+// let material = null;
+// let dimObj = [];
+
 // helper parameters
-let xzPlane = null;
-let xzSize = 10;
-let xzColor1 = 'rgb(170,170,255)';
-let xzColor2 = 'rgb(230,230,230)';
+// let xzPlane = null;
+// let xzSize = 10;
+// let xzColor1 = 'rgb(170,170,255)';
+// let xzColor2 = 'rgb(230,230,230)';
 
 init3D();
 animate();
 
 // register click handler
-$('#glb-selector').click();
-$('.glb-object').click(function () {
-	let path = $(this).attr('path');
-	loadGLB(path);
-});
+// $('#glb-selector').click();
+// $('.glb-object').click(function () {
+// 	let path = $(this).attr('path');
+// 	loadGLB(path);
+// });
 
 function init3D() {
+
+	clock = new THREE.Clock();
 
 	scene = new THREE.Scene();
 	scene.background = new THREE.Color("rgb(255, 255, 255)");
 
-	clock = new THREE.Clock();
-
 	// create camera
 	let screenRatio = sceneWidth / sceneHeight;
 	camera = new THREE.PerspectiveCamera(45, screenRatio, 0.01, 10000);
-	camera.position.set(100, 100, 100);
+	camera.position.copy(initViewerPos);
 	camera.lookAt(0, 0, 0);
-
-	// create X-Z plane
-	createXZPlane();
 
 	// create light and add to scene
 	createEnvLights();
@@ -81,17 +76,17 @@ function init3D() {
 	document.getElementById('three').appendChild(renderer.domElement);
 
 	// create lable renderer - prepare for axis lable
-	// labelRenderer = new CSS2DRenderer();
-	// labelRenderer.setSize(sceneWidth, sceneHeight);
-	// labelRenderer.domElement.style.position = 'absolute';
-	// labelRenderer.domElement.style.top = '0px';
-	// document.getElementById('three').appendChild(labelRenderer.domElement);
+	labelRenderer = new CSS2DRenderer();
+	labelRenderer.setSize(sceneWidth, sceneHeight);
+	labelRenderer.domElement.style.position = 'absolute';
+	labelRenderer.domElement.style.top = '0px';
+	document.getElementById('three').appendChild(labelRenderer.domElement);
 
 	// font
-	// let loader = new TTFLoader();
-	// loader.load('fonts/segoepr.ttf', function (json) {
-	// 	labelFont = new Font(json);
-	// });
+	let loader = new TTFLoader();
+	loader.load('fonts/segoepr.ttf', function (json) {
+		labelFont = new Font(json);
+	});
 
 	// object loader
 	objLoader = new GLTFLoader();
@@ -104,26 +99,44 @@ function init3D() {
 	});
 
 	// create controller
-	// FirstPersonControls - 提供第一人稱運動
-	controls = new PointerLockControls(camera, renderer.domElement);
-	controls.autoForward = false;
-	controls.noFly = true;
-	controls.movementSpeed = 10;
-	controls.lookSpeed = 0.1;
+	// OrbitControls - 提供放大. 縮小, 平移, 旋轉功能
+	// controls = new OrbitControls(camera, labelRenderer.domElement);
+	// controls.enableDamping = true;
+	// controls.dampingFactor = 0.05;
+	// controls.screenSpacePanning = false;
+	// controls.minDistance = 10;
+	// controls.maxDistance = 3000;
 
-	//
-	loadGLB('model/xyz_100.glb');
+	// controls = new FirstPersonControls(camera, labelRenderer.domElement);
+	// controls.movementSpeed = 1;
+	// controls.lookSpeed = 0.01;
+
+	controls = new PointerLockControls(camera, labelRenderer.domElement);
+	// controls.movementSpeed = 1;
+	// controls.lookSpeed = 0.01;
+	controls.lock();
+	scene.add(controls.getObject());
+
+	loadGLB('model/emptyHouse.glb');
+
+	window.addEventListener( 'resize', onWindowResize );
+}
+
+function onWindowResize()
+{
+	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	controls.handleResize();
 }
 
 // go render...
-function animate() {
-	controls.update(clock.getDelta());
-	renderer.render(scene, camera);
+function animate()
+{
 	requestAnimationFrame(animate);
-}
 
-function render() {
-	controls.update(clock.getDelta());
+	// https://github.com/mrdoob/three.js/blob/master/examples/misc_controls_pointerlock.html
+	// controls.update(clock.getDelta());
 	renderer.render(scene, camera);
 }
 
@@ -163,34 +176,14 @@ function loadGLB(path) {
 		}
 		scene.add(obj);
 
-		xzSize = Math.max(Math.max(maxDim.x - minDim.x, maxDim.y - minDim.y), maxDim.z - minDim.z);
-		//createXZPlane();
+		// xzSize = Math.max(Math.max(maxDim.x - minDim.x, maxDim.y - minDim.y), maxDim.z - minDim.z);
 
-		camera.position.set(100, 100, 100);
+		camera.position.copy(initViewerPos);
 		camera.lookAt(0, 0, 0);
+
 	}, undefined, function (error) {
-		console.error(error);
+		console.log(error);
 	});
-}
-
-function createXZPlane() {
-
-	if (xzPlane !== null) scene.remove(xzPlane);
-
-	// calculate size
-	xzSize = 10 * Math.round(xzSize * 2.0 / 10);
-	let div = Math.round(xzSize / 10);
-	div = div + (div % 2);
-	if (div < 10) div = 10;
-
-	// add plane
-	xzPlane = new THREE.GridHelper(xzSize, div, xzColor1, xzColor2);
-	scene.add(xzPlane);
-
-	// modify camera position according to the plane size
-	let cameraPos = xzSize / 2;
-	camera.position.set(0, cameraPos, cameraPos);
-	camera.lookAt(0, 0, 0);
 }
 
 function createEnvLights() {

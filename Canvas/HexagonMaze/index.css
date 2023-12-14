@@ -1,0 +1,99 @@
+body {
+  background-color: rgb(36, 37, 38);
+  color: white;
+}
+
+div.col {
+  padding: 10px;
+  display: block;
+  box-sizing: border-box;
+}
+
+div.c1 {
+  height: 40px;
+  width: 100%;
+}
+div.c2 {
+  height: 50px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+#mazeArea {
+  border: 1px solid darkgray;
+  display: block;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+#parameters {
+  box-sizing: border-box;
+  font-family: 'Arial', cursive;
+  font-size: 14px;
+  margin: 0;
+  padding: 10px;
+  width: 100%;
+  top: 10px;
+  left: 10px;
+  color: lightgray;
+  background: none;
+  z-index: 100;
+}
+
+#parameters input {
+  color: yellow;
+  background-color: black;
+  border: none;
+  border: 1px solid rgb(104, 104, 104);
+  width: 20px;
+  text-align: center;
+  line-height: 150%;
+  margin-bottom: 5px;
+}
+
+#maze-curr {
+  fill: white;
+  fill-opacity: 0.8;
+}
+
+#maze-start {
+  fill: yellow;
+  animation-duration: 3s;
+  animation-name: shine;
+  animation-iteration-count: infinite;
+}
+
+#maze-end {
+  fill: red;
+  animation-duration: 3s;
+  animation-name: shine;
+  animation-iteration-count: infinite;
+}
+
+#maze-line-group {
+  stroke: white;
+  stroke-opacity: 0.5;
+  fill: none;
+  stroke-linecap: round;
+}
+
+#walk-path {
+  stroke: gold;
+  fill: none;
+  stroke-linecap: round;
+}
+
+@keyframes shine {
+  from {
+    fill-opacity: 0.2;
+  }
+
+  50% {
+    fill-opacity: 1;
+  }
+
+  to {
+    fill-opacity: 0.2;
+  }
+}
