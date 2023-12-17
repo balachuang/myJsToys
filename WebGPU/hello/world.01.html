@@ -1,0 +1,56 @@
+<!doctype html>
+
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>WebGPU Life</title>
+</head>
+<body>
+	<canvas width="512" height="512"></canvas>
+	<script type="module">
+		// reference: https://codelabs.developers.google.com/your-first-webgpu-app?hl=zh-cn#2
+		const canvas = document.querySelector("canvas");
+
+		// check if WebGPU is available
+		if (!navigator.gpu) throw new Error("WebGPU not supported on this browser.");
+
+		// get GPUAdapter: 代表目前 Browser 的 WebGPU 實作, 有可能為 null.
+		const adapter = await navigator.gpu.requestAdapter();
+		if (!adapter) throw new Error("No appropriate GPUAdapter found.");
+
+		// get Device: 一個 adapter 實體 (instance), 用來和 GPU 溝通
+		const device = await adapter.requestDevice();
+
+		// get context: 用來在 Canvas 上輸出. Canvas 有三種 context: "webgpu", "webgl", "2d"
+		const canvasFormat = navigator.gpu.getPreferredCanvasFormat();
+		const context = canvas.getContext("webgpu");
+		context.configure({
+			device: device,
+			format: canvasFormat,
+		});
+
+		// Get Encoder: 用來記錄, 處理, 及轉送 WebGPU 命令.
+		const encoder = device.createCommandEncoder();
+
+		// 執行 WebGPU 命令. 所有 WebGPU 動作都是用 RenderPass 進行.
+		// Get RenderPass: Render Pass 是指 WebGPU 所有執行繪圖的動作.
+		const pass = encoder.beginRenderPass({
+			colorAttachments: [{
+				view: context.getCurrentTexture().createView(),
+				loadOp: "clear",
+				clearValue: { r: 0, g: 0, b: 0.4, a: 1 },
+				storeOp: "store",
+			}]
+		});
+
+		// 結束 Render Pass. 結束後所有工作還沒發給 GPU, 只是先暫存在 Encoder 而已.
+		pass.end();
+
+		// 結束 Encoder. Encoder 結束後時會回傳所有指令.
+		const commandBuffer = encoder.finish();
+
+		// push command to device
+		device.queue.submit([commandBuffer]);
+	</script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!doctype html>
+
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>WebGPU Life</title>
+</head>
+<body>
+	<canvas width="512" height="512"></canvas>
+	<script type="module">
+		// reference: https://codelabs.developers.google.com/your-first-webgpu-app?hl=zh-cn#3
+		let canvas = document.querySelector("canvas");
+
+		// check if WebGPU is available
+		if (!navigator.gpu) throw new Error("WebGPU not supported on this browser.");
+
+		// get GPUAdapter: 代表目前 Browser 的 WebGPU 實作, 有可能為 null.
+		let adapter = await navigator.gpu.requestAdapter();
+		if (!adapter) throw new Error("No appropriate GPUAdapter found.");
+
+		// get Device: 一個 adapter 實體 (instance), 用來和 GPU 溝通
+		let device = await adapter.requestDevice();
+
+		// get context: 用來在 Canvas 上輸出. Canvas 有三種 context: "webgpu", "webgl", "2d"
+		let canvasFormat = navigator.gpu.getPreferredCanvasFormat();
+		let context = canvas.getContext("webgpu");
+		context.configure({
+			device: device,
+			format: canvasFormat,
+		});
+
+		// create Vertex Buffer: 存放 3D 物件頂點
+		// 1. define 點資料
+		// 2. create Vertex Buffer, 用點資料預先定義 buffer 長度
+		// 3. copy 點資料to buffer
+		let vertices = new Float32Array([ // 逆時針定義
+			-0.5, -0.5,
+			 0.5, -0.5,
+			 0.0,  0.5,
+		]);
+		let vertexBuffer = device.createBuffer({
+			label: "My Triangle",
+			size: vertices.byteLength,
+			usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+		});
+		device.queue.writeBuffer(vertexBuffer, /*bufferOffset=*/0, vertices);
+
+		// create Vertext Layout: 說明 Vertext 內容是什麼
+		const vertexBufferLayout = {
+			arrayStride: 8, // 表示一組點佔了 8 位元
+			attributes: [{
+				format: "float32x2",
+				offset: 0,
+				shaderLocation: 0, // Position, see vertex shader
+			}],
+		};
+
+		// create Shader Module: 著色器, 可以自行定義每個點的顏色
+		const cellShaderModule = device.createShaderModule({
+			label: 'Practice Shader',
+			code: `
+				@vertex
+				fn vertexShader(@location(0) pos: vec2f) -> @builtin(position) vec4f {
+					return vec4f(pos, 0, 1);
+				}
+
+				@fragment
+				fn fragmentShader() -> @location(0) vec4f {
+					return vec4f(1, 0, 0, 1);
+				}
+			`
+		});
+
+		// create Render Pipeline
+		const cellPipeline = device.createRenderPipeline({
+			label: "Practice Render Pipeline",
+			layout: "auto",
+			vertex: {
+				module: cellShaderModule,
+				entryPoint: "vertexShader",
+				buffers: [vertexBufferLayout]
+			},
+			fragment: {
+				module: cellShaderModule,
+				entryPoint: "fragmentShader",
+				targets: [{
+					format: canvasFormat
+				}]
+			}
+		});
+
+		// Get Encoder: 用來記錄, 處理, 及轉送 WebGPU 命令.
+		let encoder = device.createCommandEncoder();
+
+		// 執行 WebGPU 命令. 所有 WebGPU 動作都是用 RenderPass 進行.
+		// Get RenderPass: Render Pass 是指 WebGPU 所有執行繪圖的動作.
+		let pass = encoder.beginRenderPass({
+			colorAttachments: [{
+				view: context.getCurrentTexture().createView(),
+				loadOp: "clear",
+				clearValue: { r: 0, g: 0, b: 0.4, a: 1 },
+				storeOp: "store",
+			}]
+		});
+
+		// 畫三角型
+		pass.setPipeline(cellPipeline);
+		pass.setVertexBuffer(0, vertexBuffer);
+		pass.draw(vertices.length / 2); // 3 vertices
+
+		// 結束 Render Pass. 結束後所有工作還沒發給 GPU, 只是先暫存在 Encoder 而已.
+		pass.end();
+
+		// 結束 Encoder. Encoder 結束後時會回傳所有指令.
+		let commandBuffer = encoder.finish();
+
+		// push command to device
+		device.queue.submit([commandBuffer]);
+	</script>
+</body>
+</html>
