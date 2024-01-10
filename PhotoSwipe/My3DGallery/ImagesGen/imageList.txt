@@ -1,0 +1,11 @@
+
+FullFileName  Wide  High 
+------------  ----  ---- 
+3Cups.png     	1920 	1080
+Mahjong.png   	1920 	1080
+Ocean.png     	1920 	1080
+SnowMan.png   	1920 	1080
+SunnyRoom.png 	1600 	1200
+Toilet.png    	1920 	1080
+
+
