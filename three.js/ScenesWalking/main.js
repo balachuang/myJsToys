@@ -1,6 +1,6 @@
 // TO-DO
-// 1. add Name in Blender and set camera positon by reference obj
-// 2. add lights in Blender and set if lights can be loaded
+// 1. add Name in Blender and set camera positon by reference obj: _ViewRef_ --> done
+// 2. add lights in Blender and set if lights can be loaded --> false, GLB file does not contain Lights
 // 3. add controls for speed-up / down
 
 // =========================================================== import objects
@@ -16,8 +16,8 @@ let sceneWidth = $('#view-area').width();
 let sceneHeight = $('#view-area').height();
 
 // =========================================================== 3D
-const defaultCamPos = new THREE.Vector3(15, 1.8, 15);
-const defaultCamGaz = new THREE.Vector3(0, 0, 0);
+let defaultCamPos = new THREE.Vector3(15, 1.8, 15);
+let defaultCamGaz = new THREE.Vector3(0, 0, 0);
 
 // used by PointerLockControls
 let objects = [];
@@ -30,7 +30,7 @@ let scene = null;
 let renderer = null;
 let controls = null;
 let objLoader = null;
-let glbObj = { loaded: false };
+// let glbObj = { loaded: false };
 let clock = null;
 
 let raycaster = null;
@@ -83,7 +83,8 @@ function init3D() {
 	document.addEventListener( 'keydown', onKeyDown );
 	document.addEventListener( 'keyup', onKeyUp );
 
-	loadGLB('model/emptyHouse.glb');
+	loadGLB('model/viewRefTest.glb');
+	// loadGLB('model/emptyHouse.glb');
 	// createTestObj();
 }
 
@@ -161,38 +162,31 @@ function updatePointerLockControls()
 function loadGLB(path)
 {
 	// remove all objects first
-	if (glbObj.loaded) scene.remove(glbObj.obj);
-	glbObj = { loaded: false };
+	while(scene.children.length > 0) scene.remove(scene.children[0]);
 
 	objLoader.load(path, function (gltf) {
-
+		// find viewer reference
 		let obj = gltf.scene;
-
-		// recalculate size
-		let maxDim = { x: -1, y: -1, z: -1 };
-		let minDim = { x: -1, y: -1, z: -1 };
 		for (let n = 0; n < obj.children.length; ++n) {
-			console.log('new object got: ' + obj.children[n].name);
-			if (obj.children[n].geometry) {
-				obj.children[n].geometry.computeBoundingBox();
-				maxDim.x = Math.max(maxDim.x, obj.children[n].geometry.boundingBox.max.x);
-				maxDim.y = Math.max(maxDim.y, obj.children[n].geometry.boundingBox.max.y);
-				maxDim.z = Math.max(maxDim.z, obj.children[n].geometry.boundingBox.max.z);
-				minDim.x = Math.min(minDim.x, obj.children[n].geometry.boundingBox.min.x);
-				minDim.y = Math.min(minDim.y, obj.children[n].geometry.boundingBox.min.y);
-				minDim.z = Math.min(minDim.z, obj.children[n].geometry.boundingBox.min.z);
-			}
+			if (obj.children[n].name != '_ViewRef_') continue;
+
+			// update viewpoint by reference object
+			obj.children[n].geometry.computeBoundingBox();
+			defaultCamPos.x = obj.children[n].position.x;
+			defaultCamPos.y = obj.children[n].geometry.boundingBox.max.y;
+			defaultCamPos.z = obj.children[n].position.z;
+
+			// remove reference object
+			obj.children.splice(n, 1);
+			break;
 		}
+
+		// add objects
 		obj.position.set(0, 0, 0);
-		glbObj = {
-			loaded: true,
-			obj: obj,
-			minDim: minDim,
-			maxDim: maxDim
-		}
 		scene.add(obj);
 		objects.push(obj);
 
+		// set viewpoint to reference object
 		camera.position.copy(defaultCamPos);
 		camera.lookAt(defaultCamGaz);
 	}, undefined, function (error) {
@@ -244,26 +238,6 @@ function createEnvLights()
 	l1.shadow.camera.far = 100;
 	l1.shadow.camera.fov = 30;
 	scene.add(l1);
-
-	// let l1 = new THREE.DirectionalLight(new THREE.Color('rgb(255,255,255)'));
-	// l1.position.set(10, 10, 10);
-	// l1.intensity = 1;
-	// scene.add(l1);
-
-	// let l2 = new THREE.DirectionalLight(new THREE.Color('rgb(255,255,255)'));
-	// l2.position.set(-100, 100, -100);
-	// l2.intensity = 0.5;
-	// scene.add(l2);
-
-	// let l3 = new THREE.DirectionalLight(new THREE.Color('rgb(255,255,255)'));
-	// l3.position.set(100, -100, -100);
-	// l3.intensity = 0.2;
-	// scene.add(l3);
-
-	// let l4 = new THREE.DirectionalLight(new THREE.Color('rgb(255,255,255)'));
-	// l4.position.set(-100, -100, 100);
-	// l4.intensity = 0.2;
-	// scene.add(l4);
 }
 
 // keyboard event handlers
