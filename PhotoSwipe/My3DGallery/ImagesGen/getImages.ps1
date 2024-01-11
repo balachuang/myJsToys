@@ -1,7 +1,6 @@
 ###$SourceDir = 'D:\MyDev\git\myJsToys\PhotoSwipe\My3DGallery\Images'
 $SourceDir = '..\Images'
 $ImageTypes = @(
-	'.jpg'
 	'.png'
 )
 
@@ -18,7 +17,7 @@ foreach ($FL_Item in $FileList)
 		{
 			$CurImage = [System.Drawing.Bitmap]::new($FL_Item.FullName)
 			[PSCustomObject]@{
-				FullFileName = $FL_Item.Name
+				FullFileName = $FL_Item.Basename
 				Wide = "`t"+$CurImage.Width
 				High = "`t"+$CurImage.Height
 			}
