@@ -5,7 +5,8 @@ import PhotoSwipeLightbox from './PhotoSwipe_v5_core/photoswipe-lightbox.esm.js'
 //     This file should be re-gerenated when a new image is added.
 const imgHtml = '<a href="{url}" data-pswp-width="{w}" data-pswp-height="{h}" target="_blank"> <img class="thumb-image" src="{url}" alt="{desc}" /></a>';
 $('#image-content').load('./ImagesGen/imageList.txt', '', function(fileContent, status){
-	var contAry = fileContent.split('\r\n');
+	var isUnixSplot = (fileContent.indexOf('\r\n') < 0);
+	var contAry = isUnixSplot ? fileContent.split('\n') : fileContent.split('\r\n');
 	var start = false;
 	for (var i=0; i<contAry.length; ++i)
 	{
