@@ -5,6 +5,10 @@ import PhotoSwipeLightbox from './PhotoSwipe_v5_core/photoswipe-lightbox.esm.js'
 //     This file should be re-gerenated when a new image is added.
 //     Full Images: ./images/xxx.png
 //     Thumbnails:  ./images/xxx.jpg (20% size of Full Images)
+// PS. SOP of Generating Images:
+//     1. Move Full-Size Image (*.png) into ./Images folder
+//     2. Generate Thumbnail (*.jpg, 20% size)
+//     3. Execute ./ImageGen/getImages.bat to update imageList.txt
 const imgHtml = '<a href="{name}.png" data-pswp-width="{w}" data-pswp-height="{h}" target="_blank"> <img class="thumb-image" src="{name}.jpg" alt="{desc}" /></a>';
 $('#image-content').load('./ImagesGen/imageList.txt', '', function(fileContent, status){
 	var isUnixSplot = (fileContent.indexOf('\r\n') < 0);

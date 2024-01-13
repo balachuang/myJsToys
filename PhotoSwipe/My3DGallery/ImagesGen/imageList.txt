@@ -2,6 +2,7 @@
 FullFileName Wide  High 
 ------------ ----  ---- 
 3Cups        	1920 	1080
+CutePlane    	1920 	1080
 Mahjong      	1920 	1080
 Ocean        	1920 	1080
 SnowMan      	1920 	1080
