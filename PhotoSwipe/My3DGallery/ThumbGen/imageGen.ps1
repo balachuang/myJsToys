@@ -1,5 +1,4 @@
-###$SourceDir = 'D:\MyDev\git\myJsToys\PhotoSwipe\My3DGallery\Images'
-$SourceDir = '..\Images'
+$SourceDir = '..\ImageFull'
 $ImageTypes = @(
 	'.png'
 )
