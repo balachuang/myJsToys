@@ -1,0 +1,25 @@
+body {
+  background-color: rgb(36, 37, 38);
+  color: white;
+}
+
+div {
+  box-sizing: border-box;
+}
+
+div.outer {
+  border: 1px solid gray;
+  float: left;
+}
+
+div.l1-1 {
+  border-right: none;
+}
+
+div.l1-2 {
+  border-left: none;
+}
+
+div.l1-txt {
+  vertical-align: middle;
+}

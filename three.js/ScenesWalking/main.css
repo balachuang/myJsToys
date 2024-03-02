@@ -4,11 +4,12 @@ body {
   display: flex;
   justify-content: center;
   background-color: white;
+  overflow: hidden;
 }
 
-#view-area {
-  width: 99vw;
-  height: 99vh;
+#three {
+  width: 100vw;
+  height: 100vh;
   border: 1px solid rgb(200, 200, 200);
   display: flex;
 }
