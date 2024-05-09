@@ -8,7 +8,7 @@ import { OBJLoader } from 'https://threejs.org/examples/jsm/loaders/OBJLoader.js
 // =========================================================== 自訂變數
 // object file name:
 // EmptyHouse.glb, room.glb, xyz.glb, Scene.glb, basic.obj
-let defaultObj = 'model/EmptyHouse.glb';
+let defaultObj = 'model/Scene.glb';
 
 // =========================================================== Viewport
 let sceneWidth = $('#three').width();
