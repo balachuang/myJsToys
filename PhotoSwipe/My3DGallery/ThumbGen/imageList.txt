@@ -7,9 +7,8 @@ CutePlane     	1920 	1080
 CutePlanModel 	1598 	940 
 Mahjong       	1920 	1080
 Ocean         	1920 	1080
+Pixel6Pro     	1920 	1080
 SnowMan1      	1920 	1080
 SnowMan2      	1214 	1080
 SunnyRoom     	1600 	1200
 Toilet        	1920 	1080
-
-

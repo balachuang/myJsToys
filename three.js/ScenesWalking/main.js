@@ -1,33 +1,29 @@
 // =========================================================== import objects
 import * as THREE from 'three';
 import { Vector3 } from 'three';
-// import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
 import { PointerLockControls } from 'https://threejs.org/examples/jsm/controls/PointerLockControls.js';
 import { GLTFLoader } from 'https://threejs.org/examples/jsm/loaders/GLTFLoader.js';
 import { OBJLoader } from 'https://threejs.org/examples/jsm/loaders/OBJLoader.js';
-// import { CSS2DRenderer, CSS2DObject } from 'https://threejs.org/examples/jsm/renderers/CSS2DRenderer.js';
 
-// =========================================================== Calculate High
+// =========================================================== 自訂變數
+// object file name:
+// EmptyHouse.glb, room.glb, xyz.glb, Scene.glb, basic.obj
+let defaultObj = 'model/EmptyHouse.glb';
+
+// =========================================================== Viewport
 let sceneWidth = $('#three').width();
 let sceneHeight = $('#three').height();
 
 $('#three').width(sceneWidth);
 $('.cols').height(sceneHeight);
 
-// =========================================================== Viewer & Scene
-// let defaultObj = 'model/emptyHouse.glb';
-// let defaultObj = 'model/room.glb';
-// let defaultObj = 'model/xyz.glb';
-// let defaultObj = 'model/Scene.glb';
-let defaultObj = 'model/GoogleMap.glb';
-// let defaultObj = 'model/basic.obj';
-
+// =========================================================== Viewer
 let viewerName = '_ViewRef_';
 let viewerHeight = 1.8;
 let viewerPosX = 10;
 let viewerPosZ = -10;
 
-// =========================================================== 3D
+// =========================================================== Scene
 let camera = null;
 let scene = null;
 let renderer = null;
@@ -36,16 +32,16 @@ let glbObj = { objs: [], loaded: false };
 
 // parameters for PointerLockControls
 // let raycaster = null;
-let moveForward = false;
-let moveBackward = false;
-let moveLeft = false;
-let moveRight = false;
+let moveFwd = false;
+let moveBwd = false;
+let moveLft = false;
+let moveRgt = false;
 let moveUp = false;
-let moveDown = false;
+let moveDn = false;
 let prevTime = performance.now();
 let velocity = new THREE.Vector3();
 let direction = new THREE.Vector3();
-let speed = 30.0;
+let speed = 50.0;
 
 
 init3D();
@@ -54,6 +50,7 @@ animate();
 document.getElementById('three').addEventListener('click', function(){ controls.lock(); });
 document.addEventListener('keydown', onKeyDown);
 document.addEventListener('keyup', onKeyUp);
+document.addEventListener('wheel', onMouseWheel);
 
 function init3D()
 {
@@ -105,6 +102,7 @@ function animate()
 function updatePointerLockControls()
 {
 	const time = performance.now();
+	let delta = (time - prevTime) / 1000;
 
 	// 設定 光追物件位置 = 控制物件位置
 	// raycaster.ray.origin.copy(controls.getObject().position);
@@ -116,7 +114,6 @@ function updatePointerLockControls()
 	// let intersections = raycaster.intersectObjects(glbObj.objs, false); //--> intersections.length = 0 ??? why
 	// let onObject = intersections.length > 0;
 	// let distance = (intersections.length > 0) ? intersections[0].distinace : 9999;
-	let delta = (time - prevTime) / 1000;
 
 	velocity.x -= velocity.x * 10 * delta;
 	velocity.z -= velocity.z * 10 * delta;
@@ -124,17 +121,17 @@ function updatePointerLockControls()
 	// velocity.y = defaultCamPos.y;
 	// if (distance < 0.5) velocity.z = 0;
 
-	direction.z = Number(moveForward) - Number(moveBackward);
-	direction.x = Number(moveRight) - Number(moveLeft);
+	direction.z = Number(moveFwd) - Number(moveBwd);
+	direction.x = Number(moveRgt) - Number(moveLft);
 	direction.normalize(); // this ensures consistent movements in all directions
 
-	// if (moveForward && (distance >= 0.5)) velocity.z -= direction.z * speed * delta;
-	// if (moveBackward) velocity.z -= direction.z * speed * delta;
-	if (moveForward || moveBackward) velocity.z -= direction.z * speed * delta;
-	if (moveLeft    || moveRight   ) velocity.x -= direction.x * speed * delta;
+	// if (moveFwd && (distance >= 0.5)) velocity.z -= direction.z * speed * delta;
+	// if (moveBwd) velocity.z -= direction.z * speed * delta;
+	if (moveFwd || moveBwd) velocity.z -= direction.z * speed * delta;
+	if (moveLft || moveRgt) velocity.x -= direction.x * speed * delta;
 
-	if (moveUp  ) controls.getObject().position.y += delta;
-	if (moveDown) controls.getObject().position.y -= delta;
+	if (moveUp) controls.getObject().position.y += 0.1 * speed * delta;
+	if (moveDn) controls.getObject().position.y -= 0.1 * speed * delta;
 
 	// 前進方向有東西
 	// if (onObject === true)
@@ -199,13 +196,6 @@ function load3DModel(path)
 	});
 }
 
-function updateViewerPos()
-{
-	camera.position.set(viewerPosX, viewerHeight, viewerPosZ);
-	camera.lookAt(0, viewerHeight, 0);
-	controls.getObject().position.set(viewerPosX, viewerHeight, viewerPosZ);
-}
-
 function createEnvLights()
 {
 	let ambientLight = new THREE.AmbientLight(new THREE.Color('rgb(255,255,255)'));
@@ -232,6 +222,13 @@ function createEnvLights()
 	scene.add(l4);
 }
 
+function updateViewerPos()
+{
+	camera.position.set(viewerPosX, viewerHeight, viewerPosZ);
+	camera.lookAt(0, viewerHeight, 0);
+	controls.getObject().position.set(viewerPosX, viewerHeight, viewerPosZ);
+}
+
 // keyboard event handlers
 // find keycode: https://www.toptal.com/developers/keycode
 function onKeyDown(event)
@@ -240,31 +237,27 @@ function onKeyDown(event)
 	{
 		case 'ArrowUp':
 		case 'KeyW':
-			moveForward = true;
+			moveFwd = true;
 			break;
 		case 'ArrowLeft':
 		case 'KeyA':
-			moveLeft = true;
+			moveLft = true;
 			break;
 		case 'ArrowDown':
 		case 'KeyS':
-			moveBackward = true;
+			moveBwd = true;
 			break;
 		case 'ArrowRight':
 		case 'KeyD':
-			moveRight = true;
+			moveRgt = true;
 			break;
 		case 'PageUp':
+		case 'KeyE':
 			moveUp = true;
 			break;
 		case 'PageDown':
-			moveDown = true;
-			break;
-		case 'NumpadAdd':
-			speed += 10.0;
-			break;
-		case 'NumpadSubtract':
-			speed -= 10.0;
+		case 'KeyQ':
+			moveDn = true;
 			break;
 	}
 };
@@ -275,25 +268,33 @@ function onKeyUp(event)
 	{
 		case 'ArrowUp':
 		case 'KeyW':
-			moveForward = false;
+			moveFwd = false;
 			break;
 		case 'ArrowLeft':
 		case 'KeyA':
-			moveLeft = false;
+			moveLft = false;
 			break;
 		case 'ArrowDown':
 		case 'KeyS':
-			moveBackward = false;
+			moveBwd = false;
 			break;
 		case 'ArrowRight':
 		case 'KeyD':
-			moveRight = false;
+			moveRgt = false;
 			break;
 		case 'PageUp':
+		case 'KeyE':
 			moveUp = false;
 			break;
 		case 'PageDown':
-			moveDown = false;
+		case 'KeyQ':
+			moveDn = false;
 			break;
 	}
 };
+
+function onMouseWheel(event)
+{
+	const delta = Math.sign(event.deltaY);
+	speed *= (delta > 0) ? 0.8 : 1.2;
+}
