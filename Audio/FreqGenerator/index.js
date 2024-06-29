@@ -23,6 +23,7 @@ function init()
 
 	// update target icon color, reference: https://feathericons.com/
 	$('#play-selected-freq svg').attr('stroke', 'gray');
+	$('#play-selected-freq-in-seq svg').attr('stroke', 'gray');
 
 	// register event handler
 	$('#add-new-row').click(addNewRow);
@@ -31,6 +32,7 @@ function init()
 	$(document).on('click', '.toggle-play-selection', updatePlaySelection);
 	$(document).on('click', '.play-single-freq', playSingleFreq);
 	$(document).on('click', '#play-selected-freq', playMultipleFreq);
+	$(document).on('click', '#play-selected-freq-in-seq', playMultipleFreqInSeq);
 }
 
 function updateInput()
@@ -81,12 +83,10 @@ function updatePlaySelection()
 
 	if (hasSelection) {
 		$('#play-selected-freq svg').attr('stroke', 'currentColor');
-		$('#play-selected-freq svg').addClass('enable');
-		$('#play-selected-freq svg').removeClass('disable');
+		$('#play-selected-freq-in-seq svg').attr('stroke', 'currentColor');
 	}else{
 		$('#play-selected-freq svg').attr('stroke', 'gray');
-		$('#play-selected-freq svg').addClass('disable');
-		$('#play-selected-freq svg').removeClass('enable');
+		$('#play-selected-freq-in-seq svg').attr('stroke', 'gray');
 	}
 }
 
@@ -113,6 +113,28 @@ function playMultipleFreq()
 	}
 }
 
+function playMultipleFreqInSeq(seq)
+{
+	if (typeof(seq) != 'number') seq = 0;
+	let switches = $('.toggle-play-selection');
+	if (seq >= switches.length) return;
+	if (!switches[seq].checked) {
+		playMultipleFreqInSeq(seq+1);
+		return;
+	}
+
+	let freq = eval($(switches[seq]).closest('tr').find('input.curr-freq').val());
+	let dura = eval($(switches[seq]).closest('tr').find('input.curr-dura').val());
+	if (typeof(freq) == 'number' && typeof(dura) == 'number') play(freq, dura, 1);
+
+	$('button.play-single-freq').eq(seq).closest('tr').addClass('table-active')
+
+	setTimeout(function(){
+		$('button.play-single-freq').eq(seq).closest('tr').removeClass('table-active')
+		playMultipleFreqInSeq(seq+1);
+	}, dura * 1000);
+}
+
 function play(frequency, duration, volumn)
 {
 	var gainNode = audioCtx.createGain();
@@ -120,7 +142,7 @@ function play(frequency, duration, volumn)
 	gainNode.connect(audioCtx.destination);
 	gainNode.gain.setValueAtTime(0, now);
 	gainNode.gain.linearRampToValueAtTime(volumn, now + 0.05);
-	gainNode.gain.exponentialRampToValueAtTime(0.01, now + duration);
+	gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
 
 	var oscillator = audioCtx.createOscillator();
 	oscillator.connect(gainNode);
