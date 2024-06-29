@@ -1,0 +1,37 @@
+body {
+  background-color: rgb(36, 37, 38);
+  color: white;
+  padding: 0px;
+  margin: 5px;
+}
+
+#space-container {
+  padding: 0px;
+  margin: 0px;
+  height: calc(100vh - 10px);
+  width: calc(100vw - 10px);
+  display: block;
+  box-sizing: border-box;
+  border: 1px solid darkgray;
+}
+
+#space {
+  height: 100%;
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+}
+
+@keyframes shine {
+  from {
+    fill-opacity: 0.2;
+  }
+
+  50% {
+    fill-opacity: 1;
+  }
+
+  to {
+    fill-opacity: 0.2;
+  }
+}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Space Simulation</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
+    <script src="index.js"></script>
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <div id="space-container">
+      <svg id="space" xmlns="http://www.w3.org/2000/svg">
+        <defs id="svg-defs">
+          <!-- <radialGradient id="starGradient">
+            <stop offset="0%" stop-color="yellow" />
+            <stop offset="70%" stop-color="yellow" />
+            <stop offset="100%" stop-color="yellow" stop-opacity="0%" />
+          </radialGradient> -->
+          <filter id="starFilter">
+            <feTurbulence
+                id="starFilter-Turbulence"
+                type="turbulence" 
+                baseFrequency="0.04"
+                numOctaves="10" 
+                result="turbulence" />
+            <feDisplacementMap 
+                id="starFilter-DisplacementMap"
+                in="SourceGraphic" 
+                in2="turbulence" 
+                scale="5" 
+                xChannelSelector="R" 
+                yChannelSelector="G" />
+          </filter>
+          <animate
+              xlink:href="#starFilter-Turbulence"
+              attributeName="baseFrequency"
+              values="0.04;0.05;0.04" dur="15s"
+              calcMode="spline"
+              keySplines=".5 0 .5 1; .5 0 .5 1"
+              repeatCount="indefinite" />
+        </defs>
+        <g id="astro-objs">
+        </g>
+      </svg>
+    </div>
+  </body>
+</html>
+
+
+<!--
+  SVG Filter 大全:
+  https://umasss.medium.com/%E4%B8%80%E6%AC%A1%E6%90%9E%E6%87%82svg%E4%B8%AD%E6%89%80%E6%9C%89%E5%B8%B8%E7%94%A8%E7%9A%84%E6%BF%BE%E9%8F%A1-3cfa92768a97
+
+  SVG Filter 動畫:
+  https://blog.techbridge.cc/2021/06/21/svg-smil-animation-intro/
+-->

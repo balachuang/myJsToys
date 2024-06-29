@@ -1,0 +1,12 @@
+body {
+  background-color: rgb(36, 37, 38);
+  color: white;
+}
+
+#3d-container {
+  border: 2px solid darkgray;
+  display: block;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
