@@ -19,44 +19,56 @@ const OCTAVE_INFO_12 = [
 	{ id:  2, name: 'B', read: 'Si', half: false },
 ];
 
-let FREQ_OPT_HTML = '<li><a class="dropdown-item" href="#" displayVal="{displayVal}" targetVal="{targetVal}">{optionText}</a></li>';
+let FREQ_OPT_HTML = '<li><a class="dropdown-item opt-frequency" href="#" singingName="{singingName}" noteName="{noteName}" frequency="{frequency}" freqIndex="{freqIndex}">{optionText}</a></li>';
 let FREQ_ROW_HTML =
-	'<tr>' +
+	'<tr style="vertical-align: baseline;">' +
 	'	<td>' +
-	'		<div class="form-check form-switch form-check-inline" style="margin-top:5px;">' +
-	'			<input class="form-check-input toggle-play-selection" type="checkbox" role="switch" style="float:right;">' +
+	'		<div class="input-group mb-3">' +
+	'			<button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Octave</button>' +
+	'			<ul class="dropdown-menu">' +
+	'				<li><a class="dropdown-item opt-octave" href="#" octave="+2">Upper   (+2)</a></li>' +
+	'				<li><a class="dropdown-item opt-octave" href="#" octave="+1">Upper   (+1)</a></li>' +
+	'				<li><a class="dropdown-item opt-octave" href="#" octave=" 0">Central (0) </a></li>' +
+	'				<li><a class="dropdown-item opt-octave" href="#" octave="-1">Lower   (-1)</a></li>' +
+	'				<li><a class="dropdown-item opt-octave" href="#" octave="-2">Lower   (-2)</a></li>' +
+	'			</ul>' +
+	'			<input type="text" class="form-control curr-octv" aria-label="Octave" placeholder="Select Octave here" value="0" readonly>' +
 	'		</div>' +
-	'	</td><td>' +
+	'	</td>' +
+	'	<td>' +
 	'		<div class="input-group mb-3">' +
 	'			<button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Frequency</button>' +
 	'			<ul class="dropdown-menu">' +
 	'				{FreqOptions}' +
 	'				<li><hr class="dropdown-divider"></li>' +
-	'				<li><a class="dropdown-item" href="#" displayVal="" targetVal="">Free Key-in</a></li>' +
+	'				<li><a class="dropdown-item opt-frequency" href="#" singingName="" noteName="" frequency="" freqIndex="-1">Free Key-in</a></li>' +
 	'			</ul>' +
 	'			<span class="input-group-text scale-name" style="display:none;"></span>' +
 	'			<span class="input-group-text scale-read" style="display:none;"></span>' +
-	'			<input type="text" class="form-control curr-freq" aria-label="Frequency" placeholder="Input freqency here">' +
+	'			<input type="text" class="form-control curr-freq" aria-label="Frequency" placeholder="Input freqency here" freqIndex="-1">' +
 	'			<span class="input-group-text">Hz</span>' +
 	'		</div>' +
-	'	</td><td>' +
+	'	</td>' +
+	'	<td>' +
 	'		<div class="input-group mb-3">' +
 	'			<button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Duration</button>' +
 	'			<ul class="dropdown-menu">' +
-	'				<li><a class="dropdown-item" href="#" displayVal="Duration" targetVal=" 1.00">  1.00 </a></li>' +
-	'				<li><a class="dropdown-item" href="#" displayVal="Duration" targetVal=" 2.00">  2.00 </a></li>' +
-	'				<li><a class="dropdown-item" href="#" displayVal="Duration" targetVal=" 3.00">  3.00 </a></li>' +
-	'				<li><a class="dropdown-item" href="#" displayVal="Duration" targetVal=" 5.00">  5.00 </a></li>' +
-	'				<li><a class="dropdown-item" href="#" displayVal="Duration" targetVal="10.00"> 10.00 </a></li>' +
-	'				<li><hr class="dropdown-divider"></li>' +
-	'				<li><a class="dropdown-item" href="#" displayVal="Duration" targetVal="">Free Key-in</a></li>' +
+	'				<li><a class="dropdown-item opt-duration" href="#" duration=" 1.00">  1.00 </a></li>' +
+	'				<li><a class="dropdown-item opt-duration" href="#" duration=" 2.00">  2.00 </a></li>' +
+	'				<li><a class="dropdown-item opt-duration" href="#" duration=" 3.00">  3.00 </a></li>' +
+	'				<li><a class="dropdown-item opt-duration" href="#" duration=" 5.00">  5.00 </a></li>' +
+	'				<li><a class="dropdown-item opt-duration" href="#" duration="10.00"> 10.00 </a></li>' +
 	'			</ul>' +
 	'			<input type="text" class="form-control curr-dura" aria-label="Duration" placeholder="Input duration here">' +
 	'			<span class="input-group-text">Sec</span>' +
 	'		</div>' +
-	'	</td><td>' +
+	'	</td>' +
+	'	<td>' +
+	'		<div class="form-check form-switch form-check-inline">' +
+	'			<input class="form-check-input toggle-play-selection" type="checkbox" role="switch" style="float:right;">' +
+	'		</div>' +
 	'		<button class="btn btn-dark remove-this-row" type="button">' +
-	'			<i data-feather="minus-square"></i>' +
+	'			<i data-feather="x-circle"></i>' +
 	'		</button>' +
 	'		<button class="btn btn-dark play-single-freq" type="button">' +
 	'			<i data-feather="play"></i>' +

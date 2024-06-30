@@ -1,13 +1,8 @@
 // 创建新的音频上下文接口
-var audioCtx = new AudioContext();
+let audioCtx = new AudioContext();
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
-// 发出的声音频率数据，表现为音调的高低
-let vLength = 0.5; // 音長
-let freqA = [264, 297, 330, 352, 396, 440, 495, 528];
-let freqB = [264, 297, 334.125, 396, 445.5, 528];
-let freqC = [196.00, 220.00, 246.94, 261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25, 587.33, 659.25, 698.46, 783.99, 880.00, 987.77, 1046.50];
-let freqGood = [285, 396, 417, 528, 639, 741, 852, 963];
+const VOL = 1;
 
 $(document).ready(init);
 
@@ -27,21 +22,41 @@ function init()
 
 	// register event handler
 	$('#add-new-row').click(addNewRow);
-	$(document).on('click', 'a.dropdown-item', updateInput);
+	$(document).on('click', 'a.opt-octave', updateOctaveInput);
+	$(document).on('click', 'a.opt-frequency', updateFrequencyInput);
+	$(document).on('click', 'a.opt-duration', updateDurationInput);
 	$(document).on('click', '.remove-this-row', function(){ $(this).closest('tr').remove(); });
 	$(document).on('click', '.toggle-play-selection', updatePlaySelection);
 	$(document).on('click', '.play-single-freq', playSingleFreq);
 	$(document).on('click', '#play-selected-freq', playMultipleFreq);
 	$(document).on('click', '#play-selected-freq-in-seq', playMultipleFreqInSeq);
+	$(document).on('keydown', 'input.curr-freq', resetFreqInput);
 }
 
-function updateInput()
+function updateOctaveInput()
 {
-	let inputBoxText = $(this).attr('targetVal');
-	let nameText = $(this).attr('displayVal');
-	let readText = $(this).text();
-	$(this).closest('div').find('input').val(inputBoxText);
-	if (inputBoxText == '') {
+	let octave = $(this).attr('octave');
+	$(this).closest('div').find('input').val(octave);
+
+	let currFreqIndex = eval($(this).closest('tr').find('input.curr-freq').attr('freqIndex'));
+	if (currFreqIndex == -1) return;
+
+	let scaleNum = CENTRAL_A_IDX + OCTAVE_INFO_12[currFreqIndex].id;
+	let scaleFreq = CENTRAL_A_FRQ_ISO * Math.pow(2, (scaleNum - CENTRAL_A_IDX) / 12);
+	let currFreq = scaleFreq * Math.pow(2, eval(octave));
+	$(this).closest('tr').find('input.curr-freq').val(currFreq.toFixed(2));
+}
+
+function updateFrequencyInput(row)
+{
+	let currOctave = eval($(this).closest('tr').find('input.curr-octv').val());
+	let frequency = eval($(this).attr('frequency')) * Math.pow(2, currOctave);
+	let freqIndex = $(this).attr('freqIndex');
+	let nameText = $(this).attr('noteName');
+	let readText = $(this).attr('singingName');
+	$(this).closest('div').find('input').val(frequency);
+	$(this).closest('div').find('input').attr('freqIndex', freqIndex);
+	if (frequency == '') {
 		$(this).closest('div').find('span.scale-name').hide();
 		$(this).closest('div').find('span.scale-read').hide();
 	}else{
@@ -50,6 +65,12 @@ function updateInput()
 		$(this).closest('div').find('span.scale-name').show();
 		$(this).closest('div').find('span.scale-read').show();
 	}
+}
+
+function updateDurationInput()
+{
+	let duration = $(this).attr('duration');
+	$(this).closest('div').find('input').val(duration);
 }
 
 function addNewRow()
@@ -62,9 +83,11 @@ function addNewRow()
 		let name = OCTAVE_INFO_12[n].name + (OCTAVE_INFO_12[n].half ? '#' : '');
 		let read = OCTAVE_INFO_12[n].read + (OCTAVE_INFO_12[n].half ? '#' : '');
 		freqOpts += FREQ_OPT_HTML
-						.replace('{targetVal}', scaleFreq.toFixed(2))
-						.replace('{displayVal}', name)
-						.replace('{optionText}', read);
+						.replace('{singingName}', read)
+						.replace('{noteName}',    name)
+						.replace('{frequency}',   scaleFreq.toFixed(2))
+						.replace('{freqIndex}',   n)
+						.replace('{optionText}',  read);
 	}
 	$(FREQ_ROW_HTML.replace('{FreqOptions}', freqOpts)).insertBefore('#end-row');
 	feather.replace(); // display icon
@@ -90,27 +113,16 @@ function updatePlaySelection()
 	}
 }
 
-function playSingleFreq()
+function resetFreqInput()
 {
-	let freq = eval($(this).closest('tr').find('input.curr-freq').val());
-	let dura = eval($(this).closest('tr').find('input.curr-dura').val());
-	if (!freq || !dura) return;
-
-	play(freq, dura, 1);
+	$(this).attr('freqIndex', -1);
+	$(this).closest('div').find('span.scale-name').hide();
+	$(this).closest('div').find('span.scale-read').hide();
 }
 
-function playMultipleFreq()
+function playSingleFreq()
 {
-	let switches = $('.toggle-play-selection');
-	for (let n=0; n<switches.length; ++n) {
-		if (switches[n].checked) {
-			let freq = eval($(switches[n]).closest('tr').find('input.curr-freq').val());
-			let dura = eval($(switches[n]).closest('tr').find('input.curr-dura').val());
-			if (!freq || !dura) continue;
-
-			play(freq, dura, 1);
-		}
-	}
+	playRow($(this).closest('tr').index());
 }
 
 function playMultipleFreqInSeq(seq)
@@ -123,26 +135,40 @@ function playMultipleFreqInSeq(seq)
 		return;
 	}
 
-	let freq = eval($(switches[seq]).closest('tr').find('input.curr-freq').val());
-	let dura = eval($(switches[seq]).closest('tr').find('input.curr-dura').val());
-	if (typeof(freq) == 'number' && typeof(dura) == 'number') play(freq, dura, 1);
+	setTimeout(
+		function(){ playMultipleFreqInSeq(seq+1); },
+		playRow(seq) * 1000);
+}
 
-	$('button.play-single-freq').eq(seq).closest('tr').addClass('table-active')
+function playMultipleFreq()
+{
+	let switches = $('.toggle-play-selection');
+	for (let n=0; n<switches.length; ++n) {
+		if (switches[n].checked) playRow(n);
+	}
+}
 
-	setTimeout(function(){
-		$('button.play-single-freq').eq(seq).closest('tr').removeClass('table-active')
-		playMultipleFreqInSeq(seq+1);
-	}, dura * 1000);
+function playRow(rowIdx)
+{
+	let rowDom = $('tbody tr').eq(rowIdx);
+	let frequency = eval(rowDom.find('input.curr-freq').val());
+	let duration = eval(rowDom.find('input.curr-dura').val());
+	if (!frequency || !duration) return;
+
+	rowDom.addClass('table-active');
+	play(frequency, duration, VOL);
+	setTimeout(function(){ rowDom.removeClass('table-active') }, duration * 1000);
+
+	return duration;
 }
 
 function play(frequency, duration, volumn)
 {
 	var gainNode = audioCtx.createGain();
-	var now = audioCtx.currentTime;
 	gainNode.connect(audioCtx.destination);
-	gainNode.gain.setValueAtTime(0, now);
-	gainNode.gain.linearRampToValueAtTime(volumn, now + 0.05);
-	gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
+	gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+	gainNode.gain.linearRampToValueAtTime(volumn, audioCtx.currentTime + 0.05);
+	gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
 
 	var oscillator = audioCtx.createOscillator();
 	oscillator.connect(gainNode);
@@ -151,18 +177,3 @@ function play(frequency, duration, volumn)
 	oscillator.start(audioCtx.currentTime);
 	oscillator.stop(audioCtx.currentTime + duration *2);
 }
-
-// Reference...
-// https://www.zhangxinxu.com/wordpress/2017/06/html5-web-audio-api-js-ux-voice/
-//
-// var oscillator = audioCtx.createOscillator();									// 创建一个OscillatorNode, 它表示一个周期性波形（振荡），基本上来说创造了一个音调
-// var gainNode = audioCtx.createGain();											// 创建一个GainNode,它可以控制音频的总音量
-// oscillator.connect(gainNode);													// 把音量，音调和终节点进行关联
-// gainNode.connect(audioCtx.destination);											// audioCtx.destination返回AudioDestinationNode对象，表示当前audio context中所有节点的最终节点，一般表示音频渲染设备
-// oscillator.type = 'sine';														// 指定音调的类型，其他还有square|triangle|sawtooth
-// oscillator.frequency.value = ;													// 设置当前播放声音的频率，也就是最终播放声音的调调
-// gainNode.gain.setValueAtTime(0, audioCtx.currentTime);							// 当前时间设置音量为0
-// gainNode.gain.linearRampToValueAtTime(0.5, audioCtx.currentTime + 0.01);			// 0.01秒后音量为1
-// oscillator.start(audioCtx.currentTime);											// 音调从当前时间开始播放
-// gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1);		// 1秒内声音慢慢降低，是个不错的停止声音的方法
-// oscillator.stop(audioCtx.currentTime + 1);										// 1秒后完全停止声音

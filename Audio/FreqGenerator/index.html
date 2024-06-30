@@ -17,25 +17,29 @@
 		<table class="table">
 			<thead>
 				<tr>
+					<th scope="col" class="col-md-2">Octave</th>
+					<th scope="col" class="col-md-4">Frequency (Hz)</th>
+					<th scope="col" class="col-md-4">Duration (Sec)</th>
 					<th scope="col">
 						<button class="btn btn-dark disable" type="button" id="play-selected-freq">
 							<i data-feather="play"></i>
 						</button>
+						<!-- <button class="btn btn-dark remove-all-rows" type="button">
+							<i data-feather="x-circle"></i>
+						</button> -->
 					</th>
-					<th scope="col" class="col-md-5">Frequency (Hz)</th>
-					<th scope="col" class="col-md-5">Duration (ms)</th>
-					<th scope="col" class="col-md-2"></th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr id="end-row">
 					<td colspan="3"></td>
 					<td>
+						<div class="form-check form-switch form-check-inline"></div>
 						<button class="btn btn-dark" type="button" id="add-new-row">
 							<i data-feather="plus-square"></i>
 						</button>
 						<button class="btn btn-dark disable" type="button" id="play-selected-freq-in-seq">
-							<i data-feather="play"></i>
+							<i data-feather="fast-forward"></i>
 						</button>
 					</td>
 				</tr>
