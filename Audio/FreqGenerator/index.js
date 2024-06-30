@@ -18,6 +18,7 @@ function init()
 
 	// update target icon color, reference: https://feathericons.com/
 	$('#play-selected-freq svg').attr('stroke', 'gray');
+	$('#play-selected-freq svg').attr('fill', 'gray');
 	$('#play-selected-freq-in-seq svg').attr('stroke', 'gray');
 
 	// register event handler
@@ -106,9 +107,11 @@ function updatePlaySelection()
 
 	if (hasSelection) {
 		$('#play-selected-freq svg').attr('stroke', 'currentColor');
+		$('#play-selected-freq svg').attr('fill', 'currentColor');
 		$('#play-selected-freq-in-seq svg').attr('stroke', 'currentColor');
 	}else{
 		$('#play-selected-freq svg').attr('stroke', 'gray');
+		$('#play-selected-freq svg').attr('fill', 'gray');
 		$('#play-selected-freq-in-seq svg').attr('stroke', 'gray');
 	}
 }
