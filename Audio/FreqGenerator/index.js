@@ -3,6 +3,7 @@ let audioCtx = new AudioContext();
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
 const VOL = 1;
+let compressorNode = null;
 
 $(document).ready(init);
 
@@ -12,6 +13,9 @@ function init()
 		alert('当前浏览器不支持Web Audio API');
 		return;
 	}
+
+	compressorNode = audioCtx.createDynamicsCompressor();
+	compressorNode.connect(audioCtx.destination);
 
 	// initial first row
 	addNewRow();
@@ -153,24 +157,21 @@ function playMultipleFreq()
 
 function playRow(rowIdx)
 {
+	// prepare audio parameters
 	let rowDom = $('tbody tr').eq(rowIdx);
 	let frequency = eval(rowDom.find('input.curr-freq').val());
 	let duration = eval(rowDom.find('input.curr-dura').val());
 	if (!frequency || !duration) return;
 
+	// setup display
 	rowDom.addClass('table-active');
-	play(frequency, duration, VOL);
-	setTimeout(function(){ rowDom.removeClass('table-active') }, duration * 1000);
 
-	return duration;
-}
-
-function play(frequency, duration, volumn)
-{
+	// create audioNodes
 	var gainNode = audioCtx.createGain();
-	gainNode.connect(audioCtx.destination);
+	gainNode.connect(compressorNode);
+	// gainNode.connect(audioCtx.destination);
 	gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-	gainNode.gain.linearRampToValueAtTime(volumn, audioCtx.currentTime + 0.05);
+	gainNode.gain.linearRampToValueAtTime(VOL, audioCtx.currentTime + 0.05);
 	gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
 
 	var oscillator = audioCtx.createOscillator();
@@ -179,4 +180,8 @@ function play(frequency, duration, volumn)
 	oscillator.frequency.value = frequency;
 	oscillator.start(audioCtx.currentTime);
 	oscillator.stop(audioCtx.currentTime + duration *2);
+
+	setTimeout(function(){ rowDom.removeClass('table-active') }, duration * 1000);
+
+	return duration;
 }

@@ -3,6 +3,7 @@
 ## Reference
 - https://www.zhangxinxu.com/wordpress/2017/06/html5-web-audio-api-js-ux-voice/
 - https://www.oxxostudio.tw/articles/201509/web-audio-api.html
+- https://benzleung.gitbooks.io/web-audio-api-mini-guide/content/chapter3-2-4.html
 
 ## Quick Introduction
 | Code Snippet                                                                 | Introduction                                                                  |
@@ -19,3 +20,9 @@
 | gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1); | 1 秒内声音慢慢降低                                                             |
 | oscillator.stop(audioCtx.currentTime + 1);                                   | 1 秒后完全停止声音                                                              |
 |------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+
+##	audioNodes
+1. OscillatorNode : 振盪產生器
+1. GainNode : 音量調整
+1. CompressorNode : 混音器 (同時發多個聲音時需要, 直接把 GainNode 連到 Destination 會出現爆音)
+1. destination : 輸出設備
