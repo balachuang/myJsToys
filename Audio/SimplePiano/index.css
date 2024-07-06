@@ -1,0 +1,98 @@
+#piano-white-keys {
+  position: fixed;
+  height: 50vh;
+  padding-left: 0px;
+}
+
+#piano-black-keys {
+  position: fixed;
+  height: 30vh;
+  padding-left: 1.1cm;
+}
+
+div.ruler {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  height: 1cm;
+}
+
+button {
+  -webkit-border-bottom-right-radius: 5px;
+  -webkit-border-bottom-left-radius: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -moz-border-radius-bottomleft: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  /* box-shadow: 0px 5px 2px 0px rgba(255,255,255,0.15);
+  -webkit-box-shadow: 0px 5px 2px 0px rgba(255,255,255,0.15);
+  -moz-box-shadow: 0px 5px 2px 0px rgba(255,255,255,0.15); */
+}
+
+button.white-keys {
+  top: 0%;
+  width: 2cm;
+  height: 50vh;
+  color: gray;
+  border: 1px solid lightgray;
+  background: none;
+  float: left;
+  margin-left: 0.05cm;
+  margin-right: 0.05cm;
+  vertical-align: bottom;
+}
+
+button.black-keys {
+  top: 0%;
+  width: 1.4cm;
+  height: 30vh;
+  color: gray;
+  border: none;
+  background: lightgray;
+  float: left;
+  margin-left: 0.35cm;
+  margin-right: 0.35cm;
+  vertical-align: bottom;
+}
+
+button.no-show {
+  color: none;
+  border: none;
+  background: none;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+}
+
+button.white-keys.active {
+  background: darkgray;
+}
+
+button.black-keys.active {
+  background: white;
+}
+
+div.white-key-text {
+  display: table-cell;
+  width: 1.8cm;
+  height: 45vh;
+  background: none;
+  border: none;
+  vertical-align: bottom;
+}
+
+div.black-key-text {
+  display: table-cell;
+  width: 1.0cm;
+  height: 20vh;
+  color: black;
+  background: none;
+  border: none;
+  vertical-align: bottom;
+}
+
+#piano-configs
+{
+  position: fixed;
+  margin-top: 55vh;
+}
