@@ -1,11 +1,7 @@
 // 音階
 const CENTRAL_A_IDX = 69;
-// const CENTRAL_A_FRQ_ISO = 440;
-// const CENTRAL_A_FRQ_NAT = 432;
 
 const KEY_TEMPLATE = '<button id="{id}" class="{keyClass}" scaleDiff="{scaleDiff}" frequency="{frequency}"><div class="{keyTextClass}">{keyText}</div></button>';
-// const WHITE_KEY_TEMPLATE = '<button id="{id}" class="white-keys" scaleDiff="{scaleDiff}" frequency="{frequency}"><div class="white-key-text">{keyText}</div></button>';
-// const BLACK_KEY_TEMPLATE = '<button id="{id}" class="black-keys" scaleDiff="{scaleDiff}" frequency="{frequency}"><div class="black-key-text">{keyText}</div></button>';
 
 // 12 Equal Temperament
 const WHITE_KEYS = [

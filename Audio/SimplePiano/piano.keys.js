@@ -14,6 +14,7 @@ let kbOctave = 0;
 let kbOctShift = 1;
 let pressedKeys = [];
 
+$(window).on('resize', generatePianoKeys);
 $(document).ready(init);
 $(document).on('mouseenter', 'button', mouseEnter);
 $(document).on('mouseleave', 'button', mouseLeave);
@@ -21,7 +22,6 @@ $(document).on('mousedown', 'button', mouseDown);
 $(document).on('mouseup', 'button', mouseUp);
 $(document).on('keydown', keyboardPressDn);
 $(document).on('keyup', keyboardPressUp);
-$(window).on('resize', generatePianoKeys);
 
 function init()
 {
@@ -41,7 +41,7 @@ function init()
 	$('#offset-ruler').remove();
 	generatePianoKeys();
 
-	$('#piano-configs').click();
+	$('#freqSlider').on('input', baseFreqChanged);
 }
 
 function generatePianoKeys()
@@ -196,6 +196,17 @@ function releasePianoKey(jqObj)
 		oscillatorAry[scaleDiff].stop();
 		oscillatorAry[scaleDiff] = null;
 	}
+}
+
+function baseFreqChanged()
+{
+	let baseFreq = eval($('#baseFreqText').val());
+	$('button.active').each(function(){
+		// re-calculate all frequency
+		let scaleDiff = eval($(this).attr('scaleDiff'));
+		let frequency = getScaleFrequency(scaleDiff, baseFreq);
+		oscillatorAry[scaleDiff].frequency.value = frequency;
+	});
 }
 
 function generateKeyHtml(isWhiteKey, id, scaleDiff, freq, keyText)
