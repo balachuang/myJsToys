@@ -17,6 +17,8 @@ let pressedKeys = [];
 $(document).ready(init);
 $(document).on('mouseenter', 'button', mouseEnter);
 $(document).on('mouseleave', 'button', mouseLeave);
+$(document).on('mousedown', 'button', mouseDown);
+$(document).on('mouseup', 'button', mouseUp);
 $(document).on('keydown', keyboardPressDn);
 $(document).on('keyup', keyboardPressUp);
 $(window).on('resize', generatePianoKeys);
@@ -82,6 +84,21 @@ function generatePianoKeys()
 	}
 }
 
+function mouseEnter(e)
+{
+	if (!$('#opt_mouse').prop('checked')) return;
+	pressPianoKey($(this));
+}
+
+function mouseLeave(e)
+{
+	if (!$('#opt_mouse').prop('checked')) return;
+	releasePianoKey($(this));
+}
+
+function mouseDown(e) { pressPianoKey($(this)); }
+function mouseUp(e)   { releasePianoKey($(this)); }
+
 function keyboardPressDn(e)
 {
 	e.preventDefault();
@@ -133,18 +150,6 @@ function keyboardPressUp(e)
 			kbOctShift = 1;
 			break;
 	}
-}
-
-function mouseEnter(e)
-{
-	if (!$('#opt_mouse').prop('checked')) return;
-	pressPianoKey($(this));
-}
-
-function mouseLeave(e)
-{
-	if (!$('#opt_mouse').prop('checked')) return;
-	releasePianoKey($(this));
 }
 
 function pressPianoKey(jqObj)
