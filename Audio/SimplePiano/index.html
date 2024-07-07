@@ -35,6 +35,7 @@
 						</div>
 					</td>
 					<td scope="col" class="col-md-10" style="padding-right:1cm;">
+						<!-- limit freq change in 400 ~ 450 ??? -->
 						<input type="range" class="form-range" min="20" max="2000" id="freqSlider" v-model="centAFreq" />
 						<div id="freq-lable-container" style="width:100%; height:50px; position:relative;">
 							<div type="button" class="btn btn-primary" style="position:absolute; float:left; margin-left:0%" @click="centAFreq=20">20 Hz</div>
@@ -83,7 +84,7 @@
 					<td colspan="2">
 						<div class="form-check form-check-inline">
 							<input class="form-check-input" type="checkbox" id="opt_mouse" value="opt_mouse">
-							<label class="form-check-label" for="opt_mouse">Enable Mouse Play</label>
+							<label class="form-check-label" for="opt_mouse">Play by Mouse Over</label>
 						</div>
 						<div class="form-check form-check-inline">
 							<input class="form-check-input" type="checkbox" id="opt_rampdn" value="opt_rampdn" checked>
