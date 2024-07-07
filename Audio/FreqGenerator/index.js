@@ -176,7 +176,7 @@ function playRow(rowIdx)
 
 	var oscillator = audioCtx.createOscillator();
 	oscillator.connect(gainNode);
-	oscillator.type = 'square'; // sine, square, sawtooth, triangle, custom
+	oscillator.type = 'sine'; // sine, square, sawtooth, triangle, custom
 	oscillator.frequency.value = frequency;
 	oscillator.start(audioCtx.currentTime);
 	oscillator.stop(audioCtx.currentTime + duration *2);
