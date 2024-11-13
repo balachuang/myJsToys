@@ -1,3 +1,5 @@
+// move to: https://p3d.in/u/BalaChuang
+
 import PhotoSwipeLightbox from './PhotoSwipe_v5_core/photoswipe-lightbox.esm.js';
 
 const imageHtml = '<a href="ImageFull/{name}.png" data-pswp-width="{w}" data-pswp-height="{h}" target="_blank"><img class="thumb-image" src="ImageThumb/{name}.jpg" alt="{desc}" /></a>';
@@ -40,7 +42,7 @@ $('#image-content').load('./ThumbGen/imageList.txt', '', function(fileContent, s
 			.replaceAll('{desc}', imgName);
 		$('#my-images').append(thisImage);
 	}
-	initPhotoSwipe();
+	// initPhotoSwipe();
 });
 
 // Create PhotoSwipe object

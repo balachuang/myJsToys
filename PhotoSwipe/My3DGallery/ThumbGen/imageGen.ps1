@@ -13,17 +13,17 @@ $FileList = Get-ChildItem -LiteralPath $SourceDir -File |
 foreach ($FL_Item in $FileList)
 {
 	try
-		{
-			$CurImage = [System.Drawing.Bitmap]::new($FL_Item.FullName)
-			[PSCustomObject]@{
-				FullFileName = $FL_Item.Basename
-				Wide = "`t"+$CurImage.Width
-				High = "`t"+$CurImage.Height
-			}
+	{
+		$CurImage = [System.Drawing.Bitmap]::new($FL_Item.FullName)
+		[PSCustomObject]@{
+			FullFileName = $FL_Item.Basename
+			Wide = "`t"+$CurImage.Width
+			High = "`t"+$CurImage.Height
 		}
-		catch
-		{
-			Write-Warning ('	file named = {0}' -f $FL_Item.FullName)
-			Write-Warning ('	error {0}' -f $_)
-		}
+	}
+	catch
+	{
+		Write-Warning ('	file named = {0}' -f $FL_Item.FullName)
+		Write-Warning ('	error {0}' -f $_)
+	}
 }

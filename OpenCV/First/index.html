@@ -1,0 +1,29 @@
+<!doctype html>
+
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Hello OpenCV.js</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
+    <script src="OpenCV/opencv.js"></script>
+    <script src="OpenCV/utils.js"></script>
+    <script src="Canvas2Image/canvas2image.js" type="module"></script>
+    <script src="opencv-video.js" type="module"></script>
+</head>
+<body>
+	<input type="button" id="camera" value="Turn on the Camera">
+	<input type="button" id="store" value="Store images">
+	<br>
+	<table>
+		<tr>
+			<td>
+				<video id="videoInput" width="400px" height="300px"></video>
+			</td>
+			<td>
+				<canvas id="canvasOutput" width="400px" height="300px"></canvas>
+			</td>
+		</tr>
+	</table>
+	<div id="errorMsg"></div>
+</body>
+</html>
