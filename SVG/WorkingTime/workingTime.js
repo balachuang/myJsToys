@@ -49,7 +49,7 @@ function ratioHtml() {
 	//now.setDate(now.getDate() + 1);
 
 	let yyyy = now.getFullYear();
-	let mm = now.getMonth();
+	let mm = now.getMonth() + 1;
 	let dd = now.getDate();
 	let hr = now.getHours();
 	let mi = now.getMinutes();
