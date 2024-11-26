@@ -125,7 +125,7 @@ function ratioHtml() {
 			.replace('$RatioInt$', ratio_int)
 			.replace('$RatioDec$', ratio_dec)
 			.replace('$ExtText1$', '')
-			.replace('$ExtText2$', 6 - ww);
+			.replace('$ExtText2$', Math.ceil(ratio / 20));
 	}
 	return html;
 }
