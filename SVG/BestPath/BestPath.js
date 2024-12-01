@@ -11,6 +11,7 @@ var DEFAULT_MAX_VAL = 100;
 var DEFAULT_REMOVE_PATH_RATIO = 20;
 var DEFAULT_SHOW_PATH_VALUE = true;
 var MAX_VALUE = 10000000;
+var ANIMATION_DELAY = 100;
 
 var nodes = [];
 var paths = [];
@@ -73,6 +74,7 @@ function updateParameters()
 	DEFAULT_MIN_VAL = eval($('#min-value').val());
 	DEFAULT_MAX_VAL = eval($('#max-value').val());
 	DEFAULT_REMOVE_PATH_RATIO = eval($('#remove-path-ratio').val());
+	ANIMATION_DELAY = eval($('#animation-delay').val());
 	DEFAULT_SHOW_PATH_VALUE = $('#show-path-value').is(':checked');
 
 	xNodeInterval = (svgWidth - svhMargin*2) / (DEFAULT_X_NODE_CNT - 1);
@@ -168,10 +170,10 @@ function drawGrid()
 }
 
 // invoke Dijkstra to find the best path, then update to gui
-function calculateBestPath()
+async function calculateBestPath()
 {
 	let pathFinder = new Dijkstra(updateNodeColor);
-	let bestPath = pathFinder.findBestPath(nodes, paths, MAX_VALUE);
+	let bestPath = await pathFinder.findBestPath(nodes, paths, MAX_VALUE);
 
 	// display best path
 	let bestValue = 0;
@@ -195,7 +197,7 @@ function calculateBestPath()
 		}
 
 		// update node & path color
-		updateNodeColor(prevNode);
+		await updateNodeColor(prevNode);
 		$(`#p${pathIdx}`).css({'stroke-width':'5', 'stroke':'yellow', 'stroke-opacity':'1'});
 
 		// next...
@@ -232,7 +234,7 @@ function makeSVG(tag, attrs) {
 }
 
 // change node color by node type
-function updateNodeColor(nodeIndex)
+async function updateNodeColor(nodeIndex)
 {
 	if ((nodeIndex == 0) ||
 		(nodeIndex == (nodes.length - 1)) ||
@@ -245,6 +247,10 @@ function updateNodeColor(nodeIndex)
 	let nodeStrokeClr = nodes[nodeIndex].confirmed ? 'white' : 'white';
 	let nodeFillClr = nodes[nodeIndex].confirmed ? 'white' : 'black';
 	$(`#n${nodeIndex}`).attr({'fill':nodeFillClr, 'stroke':nodeStrokeClr});
+
+	// sleep
+	// involkeSleep();
+	if (ANIMATION_DELAY > 0) await sleep(ANIMATION_DELAY);
 }
 
 // re-calculate path text location
@@ -345,6 +351,10 @@ function isBoundary(x, y)
 	if ((x == 0) || (x == DEFAULT_X_NODE_CNT-1)) return true;
 	if ((y == 0) || (y == DEFAULT_Y_NODE_CNT-1)) return true;
 	return false;
+}
+
+async function sleep(ms = 0) {
+	return new Promise(r => setTimeout(r, ms));
 }
 
 

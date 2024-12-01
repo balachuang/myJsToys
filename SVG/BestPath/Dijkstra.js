@@ -7,7 +7,7 @@ class Dijkstra
 		this.guiHandler = guiHandler;
 	};
 
-	findBestPath(nodes, paths, maxPathValue)
+	async findBestPath(nodes, paths, maxPathValue)
 	{
 		// Initialization
 		let minValue = [];
@@ -40,7 +40,7 @@ class Dijkstra
 			// complete current node
 			nodes[currNode].confirmed = true;
 			confirmCount++;
-			if (this.guiHandler != null) this.guiHandler(currNode);
+			if (this.guiHandler != null) await this.guiHandler(currNode);
 
 			// find next un-confirmed node
 			currMinVal = maxPathValue;
