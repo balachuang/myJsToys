@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Swing Motion</title>
+	<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
+	<script src="Dijkstra.js"></script>
+	<script src="BestPath.js"></script>
+	<link rel="stylesheet" href="BestPath.css">
+	<script>
+	</script>
+</head>
+<body>
+	<span id="control-panel">
+		<div id="start" class="control-panel-btn">Start</div>
+		Node count - X axis: <input type="number" id="node-count-x" value="30" quick-btn="1,2,3,5,10,20,30,40,50,60,70,80,90,100">
+		Node count - Y axis: <input type="number" id="node-count-y" value="10" quick-btn="1,2,3,5,10,20,30,40,50,60,70,80,90,100">
+		Remove Path ratio (x/100): <input type="number" id="remove-path-ratio" value="20" quick-btn="0,5,10,20,30,40,50,60,70,80,90,100">
+		Initial Minimum Value: <input type="number" id="min-value" value="1" quick-btn="1,2,3,4,5,10,20,30,40,50,100">
+		Initial Maximum Value: <input type="number" id="max-value" value="100" quick-btn="1,2,3,4,5,10,20,30,40,50,100">
+		<input type="checkbox" id="show-path-value" style="width:15px; margin-right:5px;" checked>Show Path Value<br>
+	</span>
+	<div id="svg-container">
+		<svg id="svg-area" xmlns="http://www.w3.org/2000/svg">
+			<path id="temp-path" d="M0 0 L0 0" stroke-dasharray="3 3" style="stroke-width:5; stroke:darkgray; stroke-opacity:0"></path>
+		</svg>
+	</div>
+</body>
+</html>
