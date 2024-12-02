@@ -172,6 +172,13 @@ function drawGrid()
 // invoke Dijkstra to find the best path, then update to gui
 async function calculateBestPath()
 {
+	if ($('#start').text().indexOf('RESET') >= 0)
+	{
+		$('#start').text('Start');
+		updateParameters();
+		return;
+	}
+
 	let pathFinder = new Dijkstra(updateNodeColor);
 	let bestPath = await pathFinder.findBestPath(nodes, paths, MAX_VALUE);
 
@@ -206,7 +213,7 @@ async function calculateBestPath()
 		prevNode = bestPath[prevNode];
 	}
 	bestPath[0].bestPath = true;
-	$('#start').text(`Best Path Value: ${bestValue}`);
+	$('#start').html(`Best Value: ${bestValue} &nbsp;&nbsp; [Click to RESET]`);
 }
 
 
