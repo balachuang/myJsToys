@@ -71,9 +71,6 @@ function ratioHtml() {
 		// calculate ratio to workday
 		let workStart = new Date();
 
-		// test
-		//workStart.setDate(now.getDate());
-
 		if (ww == 0) workStart.setDate(workStart.getDate() + 1);
 		if (ww == 6) workStart.setDate(workStart.getDate() + 2);
 		workStart.setHours(0);
@@ -94,10 +91,6 @@ function ratioHtml() {
 		let todayStart = new Date();
 		let todayEnd = new Date();
 
-		// test
-		//todayStart.setDate(now.getDate());
-		//todayEnd.setDate(now.getDate());
-
 		todayStart.setHours(7);
 		todayStart.setMinutes(0);
 		todayStart.setSeconds(0);
@@ -110,7 +103,7 @@ function ratioHtml() {
 
 		let ratio_color = 'black';
 		if (ww < 3) ratio_color = 'orange';
-		else if (ww = 3) ratio_color = 'lightgray';
+		else if (ww == 3) ratio_color = 'lightgray';
 		else ratio_color = 'lightgreen';
 
 		let ratio = 100.0 - 100.0 * (now.getTime() - todayStart.getTime() + (ww - 1) * 43200000) / (5 * 43200000);
