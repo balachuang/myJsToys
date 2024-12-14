@@ -1,0 +1,33 @@
+#svg-container {
+    position:  fixed;
+    top: 0px;
+    left: 0px;
+    border: 1px solid darkgray;
+	/* pointer-events: none; */
+}
+
+#svg-area {
+	pointer-events: none;
+}
+
+#source {
+	fill: yellow;
+	stroke: yellow;
+}
+
+.listener {
+	fill: black;
+	stroke: white;
+	pointer-events: visible;
+	cursor: pointer;
+}
+
+.sound {
+	fill: white;
+}
+
+.wave {
+	fill: none;
+	stroke: gray;
+	pointer-events: none;
+}
