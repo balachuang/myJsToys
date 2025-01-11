@@ -6,7 +6,7 @@ let svgTop = 30;
 function setupConfigPanel(configChangeHandler)
 {
 	// set config panel gui
-	let configButtonHeight = 0;
+	// let configButtonHeight = 0;
 	let configItems = $('#control-panel input[type="number"]');
 	$('#control-panel input[type="number"]').each(function(){
 		let thisId = $(this).attr('id');
@@ -19,7 +19,7 @@ function setupConfigPanel(configChangeHandler)
 		$(this).after(btnHtml + '<br>');
 
 		let thisBtn = $(this).position().top + $(this).height();
-		if (configButtonHeight < thisBtn) configButtonHeight = thisBtn;
+		// if (configButtonHeight < thisBtn) configButtonHeight = thisBtn;
 	});
 
 	// set button click handler
@@ -32,7 +32,7 @@ function setupConfigPanel(configChangeHandler)
 
 	// set SVG area
 	// svgTop += configItems.length * 30;
-	svgTop = configButtonHeight + svhMargin * 2;
+	svgTop = $('#control-panel').position().top + $('#control-panel').height() + svhMargin;
 	svgWidth = $(document).width() - svhMargin * 2;
 	svgHeight = window.innerHeight - svhMargin - svgTop - 20;
 

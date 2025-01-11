@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Swing Motion</title>
+	<link rel="stylesheet" href="../SvgConfigPanel.css">
+	<link rel="stylesheet" href="timeline/timeline_dark.css">
+	<!-- <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js" integrity="sha256-9zljDKpE/mQxmaR4V2cGVaQ7arF3CcXxarvgr7Sj8Uc=" crossorigin="anonymous"></script> -->
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
+	<script src="../SvgConfigPanel.js"></script>
+	<script src="timeline/timeline.js"></script>
+</head>
+<!-- <body style="background-color: rgb(36, 37, 38);"> -->
+<body style="background-color: rgb(7, 49, 1);">
+	<span id="control-panel">
+		Name: <input type="text" id="period-name" value="" style="width: 300px;"><br/>
+		Description: <input type="text" id="period-description" value="" style="width: 500px;"><br/>
+		Start Date:
+			<input type="date" id="period-start-date" value="" style="width: 150px; position: absolute; left: 85px;">
+			<input type="time" id="period-start-time" value="" style="width: 150px; position: absolute; left: 250px;"><br/>
+		End Date:
+			<input type="date" id="period-end-date" value="" style="width: 150px; position: absolute; left: 85px;">
+			<input type="time" id="period-end-time" value="" style="width: 150px; position: absolute; left: 250px;"><br/>
+		<div id="add-period" style="width: 150px; border: 1px solid gray; text-align: center; margin-top: 20px; cursor: pointer;">Add New Period</div>
+	</span>
+	<div id="svg-container" />
+</body>
+<script>
+	let timelineObject = null;
+	$(document).ready(function() {
+		setupConfigPanel(updateParameters);
+		timelineObject = new Timeline('svg-container');
+		$('#add-period').click(addNewPeriod);
+	});
+	function updateParameters() {
+		// do thing...
+	}
+	function addNewPeriod()
+	{
+		//
+		console.log('add~~~');
+	}
+</script>
+</html>

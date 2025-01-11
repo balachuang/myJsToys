@@ -1,0 +1,97 @@
+/*
+	Dark mode of Timeline
+*/
+
+#timeline-svg-area {
+	background-color: rgb(36, 37, 38);
+	border: 2px solid rgb(120, 120, 120);
+}
+
+.timeline-axis {
+	stroke:rgb(120, 120, 120);
+	stroke-width: 2;
+}
+
+.timeline-unit {
+	stroke:rgb(120, 120, 120);
+	stroke-width: 2;
+}
+
+
+.timeline-grid {
+	stroke:rgba(120, 120, 120, 0.3);
+	stroke-width: 1;
+}
+
+.timeline-lable {
+	fill: rgb(200, 200, 200);
+	font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+	font-size: 0.9em;
+}
+
+.timeline-period-line {
+	stroke:rgb(200, 200, 200);
+	stroke-width: 5;
+}
+
+.timeline-period-line:hover {
+	stroke-width: 10;
+	cursor: pointer;
+}
+
+.timeline-period-node {
+	stroke:rgb(200, 200, 200);
+	stroke-width: 3;
+	fill: rgba(36, 37, 38);
+}
+
+.timeline-period-node:hover {
+	fill: rgba(200, 200, 200);
+	cursor: pointer;
+}
+
+dialog.timeline-dialog {
+	position: fixed;
+	width: 500px;
+	border: 5px solid rgb(120, 120, 120);
+	border-radius: 10px;
+	background-color: rgb(36, 37, 38);
+	font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+	font-size: 1.2em;
+	color: white;
+	line-height: 1.5em;
+	z-index: 1000;
+}
+
+dialog.timeline-dialog input {
+	width: 97%;
+	height: 2em;
+	border: 1px solid gray;
+	border-radius: 5px;
+	background-color: rgb(120, 120, 120);
+	font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+	font-size: 1em;
+	color: white;
+	margin-bottom: 1em;
+}
+
+dialog.timeline-dialog button {
+	background: none;
+	border: none;
+	font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+	font-size: 1em;
+	color: white;
+	padding: 5px 20px;
+	cursor: pointer;
+	float: right;
+}
+
+dialog.timeline-dialog button:hover {
+	color: yellow;
+}
+
+p.timeline-dialog-title {
+	font-size: 1.5em;
+	color: white;
+	text-align: center;
+}
