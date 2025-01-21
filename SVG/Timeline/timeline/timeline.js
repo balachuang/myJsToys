@@ -478,7 +478,8 @@ class Timeline
 			let isPeriod = (pePos != psPos);
 
 			// calculate Y position
-			let yPos = _timeline_svg_height_ - _timeline_axis_height_ - (thisPeriod.yLevel + 1) * timlineHeight;
+			// let yPos = _timeline_svg_height_ - _timeline_axis_height_ - (thisPeriod.yLevel + 1) * timlineHeight;
+			let yPos = _timeline_base_height_ + (thisPeriod.yLevel + 1) * timlineHeight;
 
 			// draw Nodes and Line
 			let n1 = this.makeSVG('circle', {class:'timeline-period-node', pid:pid, cx:psPos, cy:yPos, r:10});

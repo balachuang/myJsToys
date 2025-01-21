@@ -15,8 +15,18 @@ class TimelinePeriod
 	// add task
 	addPeriod(name, descipriont, start, end, events)
 	{
+		let newPeriod = {
+			name: name,
+			description: descipriont,
+			yLevel: 0,
+			start: start,
+			end: end,
+			events: []
+		};
+
 		// calculate Y-level
 		// 這個值是用來畫圖時避開其他 period 用的, 如果同一個 level 有任何一條線重疊, 就放進下一個 level
+		// --> 再想一下有沒有更好的做法.
 		let yLevelConfirmed = false;
 		let thisYLevel = 0;
 		while (!yLevelConfirmed)
@@ -26,7 +36,8 @@ class TimelinePeriod
 			{
 				let period = this.periods[pid];
 				if (period.yLevel != thisYLevel) continue;
-				if (this.isTimeInPeriod(start, period) || this.isTimeInPeriod(end, period))
+				// if (this.isTimeInPeriod(start, period) || this.isTimeInPeriod(end, period))
+				if (this.isPeriodOverlap(newPeriod, period))
 				{
 					thisYLevel++;
 					overlap = true;
@@ -37,15 +48,7 @@ class TimelinePeriod
 		}
 		if (this.maxYLevel < thisYLevel) this.maxYLevel = thisYLevel;
 
-		let newPeriod = {
-			name: name,
-			description: descipriont,
-			yLevel: thisYLevel,
-			start: start,
-			end: end,
-			events: []
-		};
-
+		newPeriod.yLevel = thisYLevel;
 		if (events) events.forEach(t => { addTask(newPeriod, t.name, t.description, t.time); });
 
 		this.periods.push(newPeriod);
@@ -82,6 +85,13 @@ class TimelinePeriod
 	{
 		if (index >= this.periods.length) return;
 		this.periods.splice(index, 1);
+	}
+
+	isPeriodOverlap(p1, p2)
+	{
+		let b1 = this.isTimeInPeriod(p1.start, p2) || this.isTimeInPeriod(p1.end, p2);
+		let b2 = this.isTimeInPeriod(p2.start, p1) || this.isTimeInPeriod(p2.end, p1);
+		return b1 || b2;
 	}
 
 	isTimeInPeriod(time, period) { return ((period.start <= time) && (time <= period.end)); }

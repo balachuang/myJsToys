@@ -18,6 +18,7 @@ class TimelineConst
 			{ name: 'SARS 疫情',      description: '', start: '2002/11/15', end: '2003/09/15' },
 			{ name: 'Covid-19 疫情',  description: '', start: '2019/12/15', end: '2023/02/15' },
 
+			{ name: '中華商場',        description: '', start: '1961/04/22', end: '1992/10/30' },
 			{ name: '拆除中華商場',    description: '', start: '1992/10/20', end: '1992/10/30' },
 		];
 
