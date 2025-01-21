@@ -8,12 +8,16 @@ class TimelineConst
 			{ name: 'Juju 出生',      description: '', start: '1973/06/22', end: '1973/06/22' },
 			{ name: 'Bala 出生',      description: '', start: '1973/10/07', end: '1973/10/07' },
 			{ name: 'Bibi 出生',      description: '', start: '2008/03/13', end: '2008/03/13' },
+
 			{ name: '九二一大地震',    description: '', start: '1999/09/21', end: '1999/09/21' },
 			{ name: '九一一事件',      description: '', start: '2001/09/11', end: '2001/09/11' },
+
 			{ name: '蔣經國過世',      description: '', start: '1988/01/13', end: '1988/01/13' },
-			{ name: '李登輝過世',      description: '', start: '2000/05/20', end: '2000/05/20' },
+			{ name: '李登輝過世',      description: '', start: '2020/07/30', end: '2020/07/30' },
+
 			{ name: 'SARS 疫情',      description: '', start: '2002/11/15', end: '2003/09/15' },
 			{ name: 'Covid-19 疫情',  description: '', start: '2019/12/15', end: '2023/02/15' },
+
 			{ name: '拆除中華商場',    description: '', start: '1992/10/20', end: '1992/10/30' },
 		];
 
