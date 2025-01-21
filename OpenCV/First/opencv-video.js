@@ -72,3 +72,12 @@ function storeImage()
 		Canvas2Image.saveAsPNG(canvas, canvas.width, canvas.height, filename);
 	}
 }
+
+// color: gray (0~255)
+// width: 400px
+// height: 300px
+
+// function send(byte[] imageContent)
+// {
+// 	// process imageContent
+// }

@@ -7,10 +7,10 @@ class TimelinePeriod
 	}
 
 	// deep copy task
-	addPeriod(period)
-	{
-		return addPeriod(period.name, period.descipriont, period.start, period.end, period.events);
-	}
+	// addPeriod(period)
+	// {
+	// 	return addPeriod(period.name, period.descipriont, period.start, period.end, period.events);
+	// }
 
 	// add task
 	addPeriod(name, descipriont, start, end, events)

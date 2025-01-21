@@ -31,12 +31,13 @@ let _timeline_container_ = null;
 let _timeline_svg_area_ = null;
 let _timeline_svg_width_ = null;
 let _timeline_svg_height_ = null;
-let _timeline_axis_pos_ = 30;
+let _timeline_base_height_ = 30;
+let _timeline_axis_height_ = 30;
 let _timeline_max_Date_ = new Date( 8640000000000000);
 let _timeline_min_Date_ = new Date(-8640000000000000);
 
-let _timeline_line_dialog_ = null;
-let _timeline_node_dialog_ = null;
+// let _timeline_line_dialog_ = null;
+// let _timeline_node_dialog_ = null;
 
 
 class Timeline
@@ -50,22 +51,26 @@ class Timeline
 			{
 				let periodPath = scriptPath.replace('timeline.js', 'timeline.period.js');
 				let dialogPath = scriptPath.replace('timeline.js', 'timeline.dialog.js');
+				let constPath = scriptPath.replace('timeline.js', 'timeline.const.js');
 				$.getScript(periodPath, () => {console.log('timeline.period.js loaded.');});
 				$.getScript(dialogPath, () => {console.log('timeline.dialog.js loaded.');});
+				// $.getScript(constPath, () => {console.log('timeline.const.js loaded.');});
+				$.getScript(constPath, () => {this.initializeTimeline();});
 			}
 		});
 
 		this.timelineId = timelineId;
 		this.periodDialog = null;
 		this.periodObj = null;
+		this.periodConst = null;
 
 		_timeline_this_object_ = this;
-		_timeline_min_time_.setHours(0);
-		_timeline_min_time_.setMinutes(0);
-		_timeline_min_time_.setSeconds(0);
-		_timeline_max_time_.setTime(_timeline_min_time_.getTime() + _timeline_day_in_ms_);
+		_timeline_max_time_.setHours(0);
+		_timeline_max_time_.setMinutes(0);
+		_timeline_max_time_.setSeconds(0);
+		_timeline_min_time_.setTime(_timeline_max_time_.getTime() - _timeline_day_in_ms_ * 365 * 10);
 
-		this.initializeTimeline();
+		// this.initializeTimeline();
 	}
 
 	// create Timeline Gui
@@ -83,7 +88,10 @@ class Timeline
 
 		// bind mouse event
 		_timeline_container_.on('mousewheel', this.scrollSvgHandler);
-		_timeline_container_.on('click', this.clickSvgHandler);
+
+		// 暫時先不要建新 period.
+		// _timeline_container_.on('click', this.clickSvgHandler);
+
 		// 原來 SVG 元件不適用 委派綁定 !!!
 		// ref: https://powerkaifu.github.io/2020/10/07/lesson-jq-05.events/
 		// $(document).on('click', '.timeline-period-line', this.clickPeriodLine);
@@ -102,22 +110,14 @@ class Timeline
 		let periodEnd = new Date();
 		periodStart.setTime(_timeline_min_time_.getTime() + timeScale);
 		periodEnd.setTime(_timeline_max_time_.getTime() - timeScale);
-		_timeline_this_object_.addPeriod('New Period', 'Descripton', periodStart, periodEnd);
+
+		// add new period
+		if (_timeline_this_object_.periodObj == null) _timeline_this_object_.periodObj = new TimelinePeriod();
+		_timeline_this_object_.periodObj.addPeriod('New Period', 'Descripton', periodStart, periodEnd);
+
+		// _timeline_this_object_.addPeriod('New Period', 'Descripton', periodStart, periodEnd);
 
 		_timeline_this_object_.renderTimeline();
-	}
-
-	// Add Period
-	addPeriod(pName, pDescription, pStartDate, pEndDate)
-	{
-		if (this.periodObj == null) this.periodObj = new TimelinePeriod();
-		return this.periodObj.addPeriod(pName, pDescription, pStartDate, pEndDate, null);
-	}
-
-	// Add Event
-	addEvent(period, eName, eDescription, eDate)
-	{
-		period.addEvent(eName, eDescription, eDate);
 	}
 
 	// 處理 mouse 捲動事件
@@ -130,7 +130,7 @@ class Timeline
 		if (e.originalEvent.deltaY > 0)
 		{
 			let timeScale = 0.1 * (_timeline_max_time_ - _timeline_min_time_);
-			if (e.shiftKey)
+			if (e.ctrlKey)
 			{
 				// scroll down --> zoom out
 				let timeDiff = (_timeline_max_time_ - _timeline_min_time_) / _timeline_day_in_ms_;
@@ -148,11 +148,12 @@ class Timeline
 				}
 			}
 			_timeline_this_object_.renderAxisAndGrid();
+			return false;
 		}
 		else if (e.originalEvent.deltaY < 0)
 		{
 			let timeScale = 0.1 * (_timeline_max_time_ - _timeline_min_time_);
-			if (e.shiftKey)
+			if (e.ctrlKey)
 			{
 				// scroll up --> zoom in
 				let timeDiff = (_timeline_max_time_ - _timeline_min_time_) / _timeline_day_in_ms_;
@@ -170,6 +171,7 @@ class Timeline
 				}
 			}
 			_timeline_this_object_.renderAxisAndGrid();
+			return false;
 		}
 	}
 
@@ -178,17 +180,18 @@ class Timeline
 	{
 		// 移除現有 Grid Group, 並建立新的 Grid Group
 		$('.timeline-grid-group').remove();
-		let gObj = this.makeSVG('g', {class:'timeline-grid-group'});
+		let gObj = this.makeSVG('g', { class:'timeline-grid-group'});
 		_timeline_svg_area_.append(gObj);
 
 		// 畫時間軸主軸線
-		let axis_y = _timeline_svg_height_ - _timeline_axis_pos_;
+		let axis_y = _timeline_svg_height_ - _timeline_axis_height_;
 		gObj.prepend(this.makeSVG('line', {class:'timeline-axis', x1:0, y1:axis_y, x2:_timeline_svg_width_, y2:axis_y, stroke:'white'}));
+		gObj.prepend(this.makeSVG('line', {class:'timeline-axis', x1:0, y1:_timeline_base_height_, x2:_timeline_svg_width_, y2:_timeline_base_height_, stroke:'white'}));
 
 		// 計算所有格子的位置
 		// 用 timeDiff 決定格線間距
 		let gridSizeIdx = this.findBestGridSizeIndex();
-		console.log(`Time Range: ${this.getTimeString(_timeline_min_time_, gridSizeIdx)} ~ ${this.getTimeString(_timeline_max_time_, gridSizeIdx)} (${_timeline_grid_size_map_[gridSizeIdx].day} days)`);
+		console.log(`Time Range: ${this.convTimeToString(_timeline_min_time_, gridSizeIdx)} ~ ${this.convTimeToString(_timeline_max_time_, gridSizeIdx)} (${_timeline_grid_size_map_[gridSizeIdx].day} days)`);
 
 		// 決定格線起點
 		let currGridTime = this.getGridStartTime(gridSizeIdx);
@@ -199,17 +202,17 @@ class Timeline
 			if (currGridTime >= _timeline_min_time_)
 			{
 				// calculate real location in SVG
-				let x = this.getSvgXPosition(currGridTime);
+				let x = this.convTimeToSvgXPos(currGridTime);
 
 				// main unit
 				gObj.prepend(this.makeSVG('line', {class:'timeline-unit', x1:x, y1:axis_y, x2:x, y2:axis_y-10}));
 
 				// grid
-				gObj.prepend(this.makeSVG('line', {class:'timeline-grid', x1:x, y1:axis_y, x2:x, y2:0}));
+				gObj.prepend(this.makeSVG('line', {class:'timeline-grid', x1:x, y1:axis_y, x2:x, y2:_timeline_base_height_}));
 
 				// lable
 				let lbl = this.makeSVG('text', {class:'timeline-lable', x:x, y:axis_y, dx:0, dy:0});
-				lbl.innerHTML = this.getTimeString(currGridTime, gridSizeIdx);
+				lbl.innerHTML = this.convTimeToString(currGridTime, gridSizeIdx);
 				gObj.prepend(lbl);
 				// console.log('grid at: ' + lbl.innerHTML);
 
@@ -218,6 +221,9 @@ class Timeline
 			}
 			currGridTime = this.getGridNextTime(currGridTime, gridSizeIdx);
 		}
+
+		// 畫 背景 (Base Period)
+		this.renderBasePeriod();
 
 		// 畫 時間線
 		this.renderTimeline();
@@ -267,13 +273,8 @@ class Timeline
 			case '1m':
 			case '1q':
 			case '1y':
-				if (currGridTime.getMonth() == 0)
-				{
-					currGridTime.setMonth(11);
-					currGridTime.setFullYear(currGridTime.getFullYear() - 1);
-				}else{
-					currGridTime.setMonth(0);
-				}
+				if (currGridTime.getMonth() == 0) currGridTime.setFullYear(currGridTime.getFullYear() - 1);
+				currGridTime.setMonth(0);
 				currGridTime.setDate(1);
 				break;
 			case '5y':
@@ -398,41 +399,114 @@ class Timeline
 		return nextGridTime;
 	}
 
+	// 畫背景 (base period)
+	renderBasePeriod()
+	{
+		if (this.periodConst == null) this.periodConst = new TimelineConst();
+
+		// if (_timeline_base_period_ == null) return;
+		// if (_timeline_base_period_.length == 0) return;
+
+		// 移除現有 Base Group, 並建立新的 Period Group
+		$('.timeline-base-group').remove();
+		let gObj = this.makeSVG('g', {class:'timeline-base-group'});
+		_timeline_svg_area_.prepend(gObj);
+
+		for (let n in this.periodConst.basePeriod)
+		{
+			// check is skipable
+			let thisBase = this.periodConst.basePeriod[n];
+			if (thisBase.end   < _timeline_min_time_) continue;
+			if (thisBase.start > _timeline_max_time_) continue;
+
+			// calculate X position
+			let psPos = this.convTimeToSvgXPos(thisBase.start);
+			let pePos = this.convTimeToSvgXPos(thisBase.end);
+
+			// 計算 Y 軸位置
+			let yPos1 = 0;
+			let yPos2 = _timeline_svg_height_ - _timeline_axis_height_;
+
+			// draw color block
+			let clrClass = (n%2 == 0) ? 'evn' : 'odd';
+			let br = this.makeSVG('rect', {class:'timeline-base-block timeline-base-block-' + clrClass, bid:n, x:psPos, y:yPos1, width:pePos-psPos, height:yPos2-yPos1});
+			gObj.append(br);
+
+			// draw text
+			let tsPos = Math.max(psPos, 0);
+			let tePos = Math.min(pePos, _timeline_svg_width_);
+			let bName = this.makeSVG('text', {class:'timeline-base-name', x:(tsPos+tePos)/2, y:_timeline_base_height_, dx:0, dy:0});
+			bName.innerHTML = thisBase.name;
+			gObj.append(bName);
+
+			let bBox = bName.getBBox();
+			$(bName).attr({dx: -bBox.width/2, dy: -5});
+		}
+	}
+
 	// 畫時間線
 	renderTimeline()
 	{
-		if (this.periodObj == null) return;
+		if (this.periodObj == null)
+		{
+			// load and prepare all events
+			this.periodObj = new TimelinePeriod();
+			if (this.periodConst == null) this.periodConst = new TimelineConst();
+			for (let n in this.periodConst.majorEvents)
+			{
+				let e = this.periodConst.majorEvents[n];
+				this.periodObj.addPeriod(e.name, e.description, e.start, e.end);
+			}
+		}
 
 		// 移除現有 Period Group, 並建立新的 Period Group
 		$('.timeline-period-group').remove();
 		let gObj = this.makeSVG('g', {class:'timeline-period-group'});
 		_timeline_svg_area_.append(gObj);
 
-		let timlineHeight = (_timeline_svg_height_ - _timeline_axis_pos_) / (this.periodObj.maxYLevel + 2);
+		let timlineHeight = (_timeline_svg_height_ - _timeline_axis_height_) / (this.periodObj.maxYLevel + 2);
 		for (let pid in this.periodObj.periods)
 		{
-			// 計算 X 軸位置
+			// check is skippable
 			let thisPeriod = this.periodObj.periods[pid];
-			let psPos = this.getSvgXPosition(thisPeriod.start);
-			let pePos = this.getSvgXPosition(thisPeriod.end);
+			if (thisPeriod.end   < _timeline_min_time_) continue;
+			if (thisPeriod.start > _timeline_max_time_) continue;
 
-			// 計算 Y 軸位置
-			// to-do: 想一下 Y 軸要怎麼決定
-			let yPos = _timeline_svg_height_ - _timeline_axis_pos_ - (thisPeriod.yLevel + 1) * timlineHeight;
+			// calculate X position
+			let psPos = this.convTimeToSvgXPos(thisPeriod.start);
+			let pePos = this.convTimeToSvgXPos(thisPeriod.end);
+			let isPeriod = (pePos != psPos);
+
+			// calculate Y position
+			let yPos = _timeline_svg_height_ - _timeline_axis_height_ - (thisPeriod.yLevel + 1) * timlineHeight;
 
 			// draw Nodes and Line
 			let n1 = this.makeSVG('circle', {class:'timeline-period-node', pid:pid, cx:psPos, cy:yPos, r:10});
-			let n2 = this.makeSVG('circle', {class:'timeline-period-node', pid:pid, cx:pePos, cy:yPos, r:10});
-			let ln = this.makeSVG('line', {class:'timeline-period-line', pid:pid, x1:psPos, y1:yPos, x2:pePos, y2:yPos});
-			$(n1).on('click', this.clickPeriod);
-			$(n2).on('click', this.clickPeriod);
-			$(ln).on('click', this.clickPeriod);
+			// $(n1).on('click', this.clickPeriod);
 			gObj.prepend(n1);
-			gObj.prepend(n2);
-			gObj.prepend(ln);
+
+			if (isPeriod)
+			{
+				let n2 = this.makeSVG('circle', {class:'timeline-period-node', pid:pid, cx:pePos, cy:yPos, r:10});
+				let ln = this.makeSVG('line', {class:'timeline-period-line', pid:pid, x1:psPos, y1:yPos, x2:pePos, y2:yPos});
+				// $(n2).on('click', this.clickPeriod);
+				// $(ln).on('click', this.clickPeriod);
+				gObj.prepend(n2);
+				gObj.prepend(ln);
+			}
+
+			// draw label
+			let pName = this.makeSVG('text', {class:'timeline-base-name', x:(psPos+pePos)/2, y:yPos, dx:0, dy:0});
+			pName.innerHTML = thisPeriod.name;
+			gObj.append(pName);
+
+			let pBox = pName.getBBox();
+			$(pName).attr({dx: -pBox.width/2, dy: -20});
 		}
 	}
 
+	// 不提供動態的時間線編輯功能, 而是以我個人經驗為主, 打造可以自由縮放的時間軸.
+	// Dialog 留著, 之後可以改成用來顯示資訊用
 	// 處理 時間線 click 事件
 	// 處理 時間點 click 事件
 	// clickPeriodLine(e) { return this.clickPeriod(e); }
@@ -473,11 +547,23 @@ class Timeline
 		return el;
 	}
 
+	// convert Date String to Date Object in Base period
+	perpareBasePeriod()
+	{
+		if (_timeline_base_period_ == undefined) return;
+		for (let n in _timeline_base_period_)
+		{
+			if (typeof(_timeline_base_period_[n].start) == 'string') _timeline_base_period_[n].start = this.convStringToDate(_timeline_base_period_[n].start);
+			if (typeof(_timeline_base_period_[n].end  ) == 'string') _timeline_base_period_[n].end   = this.convStringToDate(_timeline_base_period_[n].end);
+		}
+		console.log('timeline.base.js ready.');
+	}
+
 	// convert Time (Date Object) to Location
-	getSvgXPosition(time) { return _timeline_svg_width_ * (time - _timeline_min_time_) / (_timeline_max_time_ - _timeline_min_time_); }
+	convTimeToSvgXPos(time) { return _timeline_svg_width_ * (time - _timeline_min_time_) / (_timeline_max_time_ - _timeline_min_time_); }
 
 	// convert Time (Date Object) to Text, by Interval Type
-	getTimeString(time, gridSizeIdx)
+	convTimeToString(time, gridSizeIdx)
 	{
 		let timeStr = '';
 		switch(_timeline_grid_size_map_[gridSizeIdx].tag)

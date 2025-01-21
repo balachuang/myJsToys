@@ -50,6 +50,15 @@
 	cursor: pointer;
 }
 
+.timeline-base-block { stroke: none; }
+.timeline-base-block-odd { fill: rgba(100,255,0,0.1); }
+.timeline-base-block-evn { fill: rgba(150,150,255,0.1); }
+.timeline-base-name {
+	fill: rgb(200, 200, 200);
+	font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+	font-size: 0.9em;
+}
+
 dialog.timeline-dialog {
 	position: fixed;
 	width: 500px;
