@@ -497,7 +497,9 @@ class Timeline
 			}
 
 			// draw label
-			let pName = this.makeSVG('text', {class:'timeline-base-name', x:(psPos+pePos)/2, y:yPos, dx:0, dy:0});
+			let tsPos = Math.max(psPos, 0);
+			let tePos = Math.min(pePos, _timeline_svg_width_);
+			let pName = this.makeSVG('text', {class:'timeline-base-name', x:(tsPos+tePos)/2, y:yPos, dx:0, dy:0});
 			pName.innerHTML = thisPeriod.name;
 			gObj.append(pName);
 
