@@ -17,9 +17,9 @@ const _timeline_dialog_html_ =
 	'    <input type="date" id="pedate" name="pedate" value="" style="width:47%;">                   ' +
 	'    <input type="time" id="petime" name="petime" value="" style="width:47%; margin-left:3px;">  ' +
 	'    <br/><br/>                                                                                  ' +
-	'    <button id="_timeline_period_dialog_del_btn_" style="float: left;">Delete</button>          ' +
-	'    <button id="_timeline_period_dialog_upt_btn_" >Update Period</button>                       ' +
-	'    <button id="_timeline_period_dialog_cnl_btn_" (click)="closeDialog()">Cancel</button>       ' +
+	// '    <button id="_timeline_period_dialog_del_btn_" style="float: left;">Delete</button>          ' +
+	// '    <button id="_timeline_period_dialog_upt_btn_" >Update Period</button>                       ' +
+	'    <button id="_timeline_period_dialog_cnl_btn_" (click)="closeDialog()">OK</button>           ' +
 	'  </form>                                                                                       ' +
 	'</dialog>                                                                                       ' ;
 

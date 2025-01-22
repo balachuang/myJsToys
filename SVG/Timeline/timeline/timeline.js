@@ -483,15 +483,15 @@ class Timeline
 
 			// draw Nodes and Line
 			let n1 = this.makeSVG('circle', {class:'timeline-period-node', pid:pid, cx:psPos, cy:yPos, r:10});
-			// $(n1).on('click', this.clickPeriod);
+			$(n1).on('click', this.clickPeriod);
 			gObj.prepend(n1);
 
 			if (isPeriod)
 			{
 				let n2 = this.makeSVG('circle', {class:'timeline-period-node', pid:pid, cx:pePos, cy:yPos, r:10});
 				let ln = this.makeSVG('line', {class:'timeline-period-line', pid:pid, x1:psPos, y1:yPos, x2:pePos, y2:yPos});
-				// $(n2).on('click', this.clickPeriod);
-				// $(ln).on('click', this.clickPeriod);
+				$(n2).on('click', this.clickPeriod);
+				$(ln).on('click', this.clickPeriod);
 				gObj.prepend(n2);
 				gObj.prepend(ln);
 			}
