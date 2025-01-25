@@ -135,18 +135,20 @@ class Timeline
 	mouseDnHandler(e)
 	{
 		$('#logspan').text(e.pointerType);
+		e.preventDefault();
 		_timeline_is_dragging_ = true;
 		_timeline_drag_from_x_ = e.screenX;
 		_timeline_drag_from_min_time_.setTime(_timeline_min_time_.getTime());
 		_timeline_drag_from_max_time_.setTime(_timeline_max_time_.getTime());
 		_timeline_drag_time_rng_ = _timeline_max_time_ - _timeline_min_time_;
-		e.stopPropagation ();
 		return false;
 	}
 
 	mouseMvHandler(e)
 	{
 		if (!_timeline_is_dragging_) return;
+		e.preventDefault();
+
 		let xOffset = e.screenX - _timeline_drag_from_x_;
 		let msOffset = _timeline_drag_time_rng_ * xOffset / _timeline_svg_width_;
 		$('#logspan').text(e.pointerType + ' : ' + xOffset);
@@ -160,16 +162,16 @@ class Timeline
 			_timeline_this_object_.renderAxisAndGrid();
 		}
 
-		e.stopPropagation ();
 		return false;
 	}
 
 	mouseUpHandler(e)
 	{
 		if (!_timeline_is_dragging_) return;
+		e.preventDefault();
+
 		$('#logspan').text('up: ' + e.pointerType);
 		_timeline_is_dragging_ = false;
-		e.stopPropagation ();
 		return false;
 	}
 
