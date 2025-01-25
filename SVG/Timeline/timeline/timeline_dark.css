@@ -5,6 +5,7 @@
 #timeline-svg-area {
 	background-color: rgb(36, 37, 38);
 	border: 2px solid rgb(120, 120, 120);
+	-webkit-overflow-scrolling: auto;
 }
 
 .timeline-axis {

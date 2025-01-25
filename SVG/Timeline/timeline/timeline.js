@@ -36,6 +36,12 @@ let _timeline_axis_height_ = 30;
 let _timeline_max_Date_ = new Date( 8640000000000000);
 let _timeline_min_Date_ = new Date(-8640000000000000);
 
+let _timeline_is_dragging_ = false;
+let _timeline_drag_from_x_ = null;
+let _timeline_drag_from_min_time_ = new Date();
+let _timeline_drag_from_max_time_ = new Date();
+let _timeline_drag_time_rng_ = null;
+
 // let _timeline_line_dialog_ = null;
 // let _timeline_node_dialog_ = null;
 
@@ -91,6 +97,9 @@ class Timeline
 
 		// 暫時先不要建新 period.
 		// _timeline_container_.on('click', this.clickSvgHandler);
+		_timeline_container_.on('mousedown', this.mouseDnHandler);
+		_timeline_container_.on('mousemove', this.mouseMvHandler);
+		_timeline_container_.on('mouseup',   this.mouseUpHandler);
 
 		// 原來 SVG 元件不適用 委派綁定 !!!
 		// ref: https://powerkaifu.github.io/2020/10/07/lesson-jq-05.events/
@@ -101,7 +110,7 @@ class Timeline
 		this.renderAxisAndGrid();
 	}
 
-	// 處理 mouse click 事件
+	// 處理 SVG mouse 事件
 	clickSvgHandler(e)
 	{
 		// click on timeline, add new period
@@ -118,6 +127,41 @@ class Timeline
 		// _timeline_this_object_.addPeriod('New Period', 'Descripton', periodStart, periodEnd);
 
 		_timeline_this_object_.renderTimeline();
+	}
+
+	mouseDnHandler(e)
+	{
+		_timeline_is_dragging_ = true;
+		_timeline_drag_from_x_ = e.screenX;
+		_timeline_drag_from_min_time_.setTime(_timeline_min_time_.getTime());
+		_timeline_drag_from_max_time_.setTime(_timeline_max_time_.getTime());
+		_timeline_drag_time_rng_ = _timeline_max_time_ - _timeline_min_time_;
+		return false;
+	}
+
+	mouseMvHandler(e)
+	{
+		if (!_timeline_is_dragging_) return;
+		let xOffset = e.screenX - _timeline_drag_from_x_;
+		let msOffset = _timeline_drag_time_rng_ * xOffset / _timeline_svg_width_;
+
+		// go dragging
+		if (((_timeline_max_Date_ - _timeline_drag_from_max_time_) > Math.abs(msOffset)) &&
+			((_timeline_drag_from_min_time_ - _timeline_min_Date_) > Math.abs(msOffset)))
+		{
+			_timeline_min_time_.setTime(_timeline_drag_from_min_time_.getTime() - msOffset);
+			_timeline_max_time_.setTime(_timeline_drag_from_max_time_.getTime() - msOffset);
+			_timeline_this_object_.renderAxisAndGrid();
+		}
+
+		return false;
+	}
+
+	mouseUpHandler(e)
+	{
+		if (!_timeline_is_dragging_) return;
+		_timeline_is_dragging_ = false;
+		return false;
 	}
 
 	// 處理 mouse 捲動事件
