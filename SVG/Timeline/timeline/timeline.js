@@ -140,6 +140,7 @@ class Timeline
 		_timeline_drag_from_min_time_.setTime(_timeline_min_time_.getTime());
 		_timeline_drag_from_max_time_.setTime(_timeline_max_time_.getTime());
 		_timeline_drag_time_rng_ = _timeline_max_time_ - _timeline_min_time_;
+		e.stopPropagation ();
 		return false;
 	}
 
@@ -159,6 +160,7 @@ class Timeline
 			_timeline_this_object_.renderAxisAndGrid();
 		}
 
+		e.stopPropagation ();
 		return false;
 	}
 
@@ -167,6 +169,7 @@ class Timeline
 		if (!_timeline_is_dragging_) return;
 		$('#logspan').text('up: ' + e.pointerType);
 		_timeline_is_dragging_ = false;
+		e.stopPropagation ();
 		return false;
 	}
 
