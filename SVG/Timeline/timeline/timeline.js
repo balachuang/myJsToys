@@ -134,7 +134,7 @@ class Timeline
 
 	mouseDnHandler(e)
 	{
-		alert(e.pointerType);
+		$('#logspan').text(e.pointerType);
 		_timeline_is_dragging_ = true;
 		_timeline_drag_from_x_ = e.screenX;
 		_timeline_drag_from_min_time_.setTime(_timeline_min_time_.getTime());
@@ -148,6 +148,7 @@ class Timeline
 		if (!_timeline_is_dragging_) return;
 		let xOffset = e.screenX - _timeline_drag_from_x_;
 		let msOffset = _timeline_drag_time_rng_ * xOffset / _timeline_svg_width_;
+		$('#logspan').text(e.pointerType + ' : ' + xOffset);
 
 		// go dragging
 		if (((_timeline_max_Date_ - _timeline_drag_from_max_time_) > Math.abs(msOffset)) &&
