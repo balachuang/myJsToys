@@ -97,9 +97,6 @@ class Timeline
 
 		// 暫時先不要建新 period.
 		// _timeline_container_.on('click', this.clickSvgHandler);
-		// _timeline_container_.on('mousedown', this.mouseDnHandler);
-		// _timeline_container_.on('mousemove', this.mouseMvHandler);
-		// _timeline_container_.on('mouseup',   this.mouseUpHandler);
 		_timeline_container_.on('pointerdown', this.mouseDnHandler);
 		_timeline_container_.on('pointermove', this.mouseMvHandler);
 		_timeline_container_.on('pointerup',   this.mouseUpHandler);
@@ -127,15 +124,13 @@ class Timeline
 		if (_timeline_this_object_.periodObj == null) _timeline_this_object_.periodObj = new TimelinePeriod();
 		_timeline_this_object_.periodObj.addPeriod('New Period', 'Descripton', periodStart, periodEnd);
 
-		// _timeline_this_object_.addPeriod('New Period', 'Descripton', periodStart, periodEnd);
-
 		_timeline_this_object_.renderTimeline();
 	}
 
 	mouseDnHandler(e)
 	{
-		$('#logspan').text(e.pointerType);
-		e.preventDefault();
+		// $('#logspan').text(e.pointerType);
+		// e.preventDefault();
 		_timeline_is_dragging_ = true;
 		_timeline_drag_from_x_ = e.screenX;
 		_timeline_drag_from_min_time_.setTime(_timeline_min_time_.getTime());
@@ -147,11 +142,11 @@ class Timeline
 	mouseMvHandler(e)
 	{
 		if (!_timeline_is_dragging_) return;
-		e.preventDefault();
+		// e.preventDefault();
 
 		let xOffset = e.screenX - _timeline_drag_from_x_;
 		let msOffset = _timeline_drag_time_rng_ * xOffset / _timeline_svg_width_;
-		$('#logspan').text(e.pointerType + ' : ' + xOffset);
+		// $('#logspan').text(e.pointerType + ' : ' + xOffset);
 
 		// go dragging
 		if (((_timeline_max_Date_ - _timeline_drag_from_max_time_) > Math.abs(msOffset)) &&
@@ -168,9 +163,9 @@ class Timeline
 	mouseUpHandler(e)
 	{
 		if (!_timeline_is_dragging_) return;
-		e.preventDefault();
+		// e.preventDefault();
 
-		$('#logspan').text('up: ' + e.pointerType);
+		// $('#logspan').text('up: ' + e.pointerType);
 		_timeline_is_dragging_ = false;
 		return false;
 	}
