@@ -457,7 +457,7 @@ class Timeline
 			for (let n in this.periodConst.majorEvents)
 			{
 				let e = this.periodConst.majorEvents[n];
-				this.periodObj.addPeriod(e.name, e.description, e.start, e.end);
+				this.periodObj.addPeriod(e.name, '', e.start, e.end);
 			}
 		}
 
