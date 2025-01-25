@@ -165,6 +165,7 @@ class Timeline
 	mouseUpHandler(e)
 	{
 		if (!_timeline_is_dragging_) return;
+		$('#logspan').text('up: ' + e.pointerType);
 		_timeline_is_dragging_ = false;
 		return false;
 	}
