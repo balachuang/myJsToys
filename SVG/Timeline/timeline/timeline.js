@@ -97,9 +97,9 @@ class Timeline
 
 		// 暫時先不要建新 period.
 		// _timeline_container_.on('click', this.clickSvgHandler);
-		_timeline_container_.on('mousedown', this.mouseDnHandler);
-		_timeline_container_.on('mousemove', this.mouseMvHandler);
-		_timeline_container_.on('mouseup',   this.mouseUpHandler);
+		// _timeline_container_.on('mousedown', this.mouseDnHandler);
+		// _timeline_container_.on('mousemove', this.mouseMvHandler);
+		// _timeline_container_.on('mouseup',   this.mouseUpHandler);
 		_timeline_container_.on('pointerdown', this.mouseDnHandler);
 		_timeline_container_.on('pointermove', this.mouseMvHandler);
 		_timeline_container_.on('pointerup',   this.mouseUpHandler);
