@@ -228,7 +228,7 @@ class Timeline
 		this.renderBasePeriod();
 
 		// 畫 時間線
-		this.renderTimeline();
+		// this.renderTimeline();
 	}
 
 	// calculate best Grid Size, feedback tab name
@@ -444,6 +444,9 @@ class Timeline
 			let bBox = bName.getBBox();
 			$(bName).attr({dx: -bBox.width/2, dy: -5});
 		}
+
+		// 畫 時間線
+		this.renderTimeline();
 	}
 
 	// 畫時間線
