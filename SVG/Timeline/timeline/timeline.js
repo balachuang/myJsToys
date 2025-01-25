@@ -134,6 +134,7 @@ class Timeline
 
 	mouseDnHandler(e)
 	{
+		alert(e.pointerType);
 		_timeline_is_dragging_ = true;
 		_timeline_drag_from_x_ = e.screenX;
 		_timeline_drag_from_min_time_.setTime(_timeline_min_time_.getTime());
