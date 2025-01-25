@@ -127,9 +127,11 @@ class Timeline
 		// 修改 SVG ViewBox size 或 Scale 都會讓線條及文字變型.
 		// ==> 直接修改日期邊界並自己算內容.
 		// 注意 Date 範圍: -271821/4/20 ~ 271821/4/20
+		let timeScaleRatio = e.shiftKey ? 0.01 : 0.1;
+		let timeScale = timeScaleRatio * (_timeline_max_time_ - _timeline_min_time_);
 		if (e.originalEvent.deltaY > 0)
 		{
-			let timeScale = 0.1 * (_timeline_max_time_ - _timeline_min_time_);
+			// let timeScale = 0.1 * (_timeline_max_time_ - _timeline_min_time_);
 			if (e.ctrlKey)
 			{
 				// scroll down --> zoom out
@@ -152,7 +154,7 @@ class Timeline
 		}
 		else if (e.originalEvent.deltaY < 0)
 		{
-			let timeScale = 0.1 * (_timeline_max_time_ - _timeline_min_time_);
+			// let timeScale = 0.1 * (_timeline_max_time_ - _timeline_min_time_);
 			if (e.ctrlKey)
 			{
 				// scroll up --> zoom in
@@ -464,6 +466,7 @@ class Timeline
 		let gObj = this.makeSVG('g', {class:'timeline-period-group'});
 		_timeline_svg_area_.append(gObj);
 
+		let labelBoxes = [];
 		let timlineHeight = (_timeline_svg_height_ - _timeline_axis_height_) / (this.periodObj.maxYLevel + 2);
 		for (let pid in this.periodObj.periods)
 		{
@@ -505,7 +508,47 @@ class Timeline
 
 			let pBox = pName.getBBox();
 			$(pName).attr({dx: -pBox.width/2, dy: -20});
+
+			// check if lable overlap
+			let iniDy = -20;
+			pBox = pName.getBBox();
+			while(this.isBoxOverlap(pBox, labelBoxes))
+			{
+				iniDy -= 20;
+				$(pName).attr({dx: -pBox.width/2, dy: iniDy});
+				pBox = pName.getBBox();
+			}
+			labelBoxes.push(pBox);
 		}
+	}
+
+	isBoxOverlap(pBox, labelBoxes)
+	{
+		for (let n in labelBoxes)
+		{
+			let tBox = labelBoxes[n];
+
+			// pBox in tBox
+			if (this.isPointInBox(pBox.x,              pBox.y,               tBox)) return true;
+			if (this.isPointInBox(pBox.x + pBox.width, pBox.y,               tBox)) return true;
+			if (this.isPointInBox(pBox.x,              pBox.y + pBox.height, tBox)) return true;
+			if (this.isPointInBox(pBox.x + pBox.width, pBox.y + pBox.height, tBox)) return true;
+
+			// tBox in pBox
+			if (this.isPointInBox(tBox.x,              tBox.y,               pBox)) return true;
+			if (this.isPointInBox(tBox.x + tBox.width, tBox.y,               pBox)) return true;
+			if (this.isPointInBox(tBox.x,              tBox.y + tBox.height, pBox)) return true;
+			if (this.isPointInBox(tBox.x + tBox.width, tBox.y + tBox.height, pBox)) return true;
+		}
+
+		return false;
+	}
+
+	isPointInBox(x, y, box)
+	{
+		let tlPtX = (box.x <= x) && (x <= box.x+box.width);
+		let tlPtY = (box.y <= y) && (y <= box.y+box.height);
+		return tlPtX && tlPtY;
 	}
 
 	// 不提供動態的時間線編輯功能, 而是以我個人經驗為主, 打造可以自由縮放的時間軸.
