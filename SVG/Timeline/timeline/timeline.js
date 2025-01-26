@@ -168,7 +168,6 @@ class Timeline
 		// go zooming
 		let offsetY = e.screenY - _timeline_drag_start_.y;
 		let offsetYMs = _timeline_drag_start_.timeRange * offsetY / _timeline_svg_width_;
-		console.log(offsetYMs);
 		let timeDiff = _timeline_drag_start_.timeRange / _timeline_day_in_ms_;
 		if ((timeDiff < 250000 * 365) && (timeDiff > 1))
 		{
@@ -528,6 +527,8 @@ class Timeline
 	// 畫時間線
 	renderTimeline()
 	{
+		console.log(TimelineConst);
+		console.log(typeof TimelineConst);
 		if (typeof TimelineConst == 'undefined') setTimeout(renderTimeline, 200);
 		if (this.periodObj == null)
 		{
