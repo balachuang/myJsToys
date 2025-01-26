@@ -527,9 +527,7 @@ class Timeline
 	// 畫時間線
 	renderTimeline()
 	{
-		console.log(TimelineConst);
-		console.log(typeof TimelineConst);
-		if (typeof TimelineConst == 'undefined') setTimeout(renderTimeline, 200);
+		if (typeof TimelinePeriod == 'undefined') setTimeout(renderTimeline, 200);
 		if (this.periodObj == null)
 		{
 			// load and prepare all events
