@@ -62,17 +62,17 @@
 	});
 	function showHelp()
 	{
-		let w = window.innerWidth;
-		let h = window.innerHeight;
-		let iw = w * 0.8;
-		let ih = iw * 325 / 490;
+		let w = $('#svg-container').width();
+		let h = $('#svg-container').height();
+		let iw = Math.min(w * 0.8, 490);
+		let ih = Math.min(iw * 325 / 490, 325);
 		$('#help-image img').css({
 			width: iw,
 			height: ih
 		});
 		$('#help-image').css({
-			left: w * 0.1,
-			top:  h/2 - 2 * ih / 3
+			left: $('#svg-container').position().left + (w - iw) / 2,
+			top:  $('#svg-container').position().top  + (h - ih) / 2
 		});
 		$('#help-image').show();
 		$('#help-image').click(function(){ $('#help-image').hide(); });
