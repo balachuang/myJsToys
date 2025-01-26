@@ -36,10 +36,8 @@
 		}
 		#help-image img {
 			display: block;
-			max-width: 594px;
-			max-height: 298px;
-			width: auto;
-			height: auto;
+			max-width: 490px;
+			max-height: 325px;
 		}
 	</style>
 </head>
@@ -64,11 +62,17 @@
 	});
 	function showHelp()
 	{
-		let w = $(document).width();
+		let w = window.innerWidth;
 		let h = window.innerHeight;
+		let iw = w * 0.8;
+		let ih = iw * 325 / 490;
+		$('#help-image img').css({
+			width: iw,
+			height: ih
+		});
 		$('#help-image').css({
-			left: w/2 - $('#help-image').width() / 2,
-			top: h / 2 - $('#help-image').height() / 2
+			left: w * 0.1,
+			top:  h/2 - 2 * ih / 3
 		});
 		$('#help-image').show();
 		$('#help-image').click(function(){ $('#help-image').hide(); });
