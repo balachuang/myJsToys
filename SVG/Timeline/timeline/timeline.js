@@ -97,10 +97,10 @@ class Timeline
 		_timeline_container_.on('pointerdown', this.mouseDnHandler);
 		_timeline_container_.on('pointermove', this.mouseMvHandler);
 		_timeline_container_.on('pointerup',   this.mouseUpHandler);
-		_timeline_container_.on('touchstart',  this.mouseDnHandler);
-		_timeline_container_.on('touchmove',   this.mouseMvHandler);
-		_timeline_container_.on('touchend',    this.mouseUpHandler);
-		_timeline_container_.on('touchcancel', this.mouseUpHandler);
+		// _timeline_container_.on('touchstart',  this.mouseDnHandler);
+		// _timeline_container_.on('touchmove',   this.mouseMvHandler);
+		// _timeline_container_.on('touchend',    this.mouseUpHandler);
+		// _timeline_container_.on('touchcancel', this.mouseUpHandler);
 
 		// 原來 SVG 元件不適用 委派綁定 !!!
 		// ref: https://powerkaifu.github.io/2020/10/07/lesson-jq-05.events/
