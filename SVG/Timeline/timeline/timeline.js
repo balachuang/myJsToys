@@ -60,7 +60,6 @@ class Timeline
 				let constPath = scriptPath.replace('timeline.js', 'timeline.const.js');
 				$.getScript(periodPath, () => {console.log('timeline.period.js loaded.');});
 				$.getScript(dialogPath, () => {console.log('timeline.dialog.js loaded.');});
-				// $.getScript(constPath, () => {console.log('timeline.const.js loaded.');});
 				$.getScript(constPath, () => {this.initializeTimeline();});
 			}
 		});
@@ -75,8 +74,6 @@ class Timeline
 		_timeline_max_time_.setMinutes(0);
 		_timeline_max_time_.setSeconds(0);
 		_timeline_min_time_.setTime(_timeline_max_time_.getTime() - _timeline_day_in_ms_ * 365 * 10);
-
-		// this.initializeTimeline();
 	}
 
 	// create Timeline Gui
@@ -100,6 +97,10 @@ class Timeline
 		_timeline_container_.on('pointerdown', this.mouseDnHandler);
 		_timeline_container_.on('pointermove', this.mouseMvHandler);
 		_timeline_container_.on('pointerup',   this.mouseUpHandler);
+		_timeline_container_.on('touchstart',  this.mouseDnHandler);
+		_timeline_container_.on('touchmove',   this.mouseMvHandler);
+		_timeline_container_.on('touchend',    this.mouseUpHandler);
+		_timeline_container_.on('touchcancel', this.mouseUpHandler);
 
 		// 原來 SVG 元件不適用 委派綁定 !!!
 		// ref: https://powerkaifu.github.io/2020/10/07/lesson-jq-05.events/
@@ -454,6 +455,7 @@ class Timeline
 	// 畫背景 (base period)
 	renderBasePeriod()
 	{
+		if (typeof TimelineConst == 'undefined') setTimeout(renderBasePeriod, 200);
 		if (this.periodConst == null) this.periodConst = new TimelineConst();
 
 		// if (_timeline_base_period_ == null) return;
@@ -502,6 +504,7 @@ class Timeline
 	// 畫時間線
 	renderTimeline()
 	{
+		if (typeof TimelineConst == 'undefined') setTimeout(renderTimeline, 200);
 		if (this.periodObj == null)
 		{
 			// load and prepare all events
