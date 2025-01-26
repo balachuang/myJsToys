@@ -478,7 +478,7 @@ class Timeline
 	// 畫背景 (base period)
 	renderBasePeriod()
 	{
-		if (typeof TimelineConst == 'undefined') setTimeout(renderBasePeriod, 200);
+		if (typeof TimelineConst == 'undefined') setTimeout(() => { this.renderBasePeriod(); }, 200);
 		if (this.periodConst == null) this.periodConst = new TimelineConst();
 
 		// if (_timeline_base_period_ == null) return;
@@ -527,7 +527,7 @@ class Timeline
 	// 畫時間線
 	renderTimeline()
 	{
-		if (typeof TimelinePeriod == 'undefined') setTimeout(renderTimeline, 200);
+		if (typeof TimelinePeriod == 'undefined') setTimeout(() => { this.renderTimeline(); }, 200);
 		if (this.periodObj == null)
 		{
 			// load and prepare all events
