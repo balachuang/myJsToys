@@ -37,6 +37,13 @@ let _timeline_max_Date_ = new Date( 8640000000000000);
 let _timeline_min_Date_ = new Date(-8640000000000000);
 
 let _timeline_is_dragging_ = false;
+let _timeline_drag_start_ = {
+	x: 0,
+	y: 0,
+	minTime: new Date(),
+	maxTime: new Date(),
+	timeRange: 0
+}
 let _timeline_drag_from_x_ = null;
 let _timeline_drag_from_min_time_ = new Date();
 let _timeline_drag_from_max_time_ = new Date();
@@ -94,13 +101,11 @@ class Timeline
 
 		// 暫時先不要建新 period.
 		// _timeline_container_.on('click', this.clickSvgHandler);
+
+		// 加了 touch event 後反而不能用手指操作, 直接用 mouse move 來操作
 		_timeline_container_.on('pointerdown', this.mouseDnHandler);
 		_timeline_container_.on('pointermove', this.mouseMvHandler);
 		_timeline_container_.on('pointerup',   this.mouseUpHandler);
-		// _timeline_container_.on('touchstart',  this.mouseDnHandler);
-		// _timeline_container_.on('touchmove',   this.mouseMvHandler);
-		// _timeline_container_.on('touchend',    this.mouseUpHandler);
-		// _timeline_container_.on('touchcancel', this.mouseUpHandler);
 
 		// 原來 SVG 元件不適用 委派綁定 !!!
 		// ref: https://powerkaifu.github.io/2020/10/07/lesson-jq-05.events/
@@ -130,31 +135,52 @@ class Timeline
 
 	mouseDnHandler(e)
 	{
-		// $('#logspan').text(e.pointerType);
-		// e.preventDefault();
 		_timeline_is_dragging_ = true;
-		_timeline_drag_from_x_ = e.screenX;
-		_timeline_drag_from_min_time_.setTime(_timeline_min_time_.getTime());
-		_timeline_drag_from_max_time_.setTime(_timeline_max_time_.getTime());
-		_timeline_drag_time_rng_ = _timeline_max_time_ - _timeline_min_time_;
+
+		_timeline_drag_start_.x = e.screenX;
+		_timeline_drag_start_.y = e.screenY;
+		_timeline_drag_start_.minTime.setTime(_timeline_min_time_.getTime());
+		_timeline_drag_start_.maxTime.setTime(_timeline_max_time_.getTime());
+		_timeline_drag_start_.timeRange = _timeline_max_time_ - _timeline_min_time_;
+
 		return false;
 	}
 
 	mouseMvHandler(e)
 	{
 		if (!_timeline_is_dragging_) return;
-		// e.preventDefault();
 
-		let xOffset = e.screenX - _timeline_drag_from_x_;
-		let msOffset = _timeline_drag_time_rng_ * xOffset / _timeline_svg_width_;
-		// $('#logspan').text(e.pointerType + ' : ' + xOffset);
+		let offsetX = e.screenX - _timeline_drag_start_.x;
+		let offsetXMs = _timeline_drag_start_.timeRange * offsetX / _timeline_svg_width_;
+		let offsetMsAbs = Math.abs(offsetXMs);
+
+		let offsetMin = 0;
+		let offsetMax = 0;
 
 		// go dragging
-		if (((_timeline_max_Date_ - _timeline_drag_from_max_time_) > Math.abs(msOffset)) &&
-			((_timeline_drag_from_min_time_ - _timeline_min_Date_) > Math.abs(msOffset)))
+		if (((_timeline_max_Date_ - _timeline_drag_start_.maxTime) > offsetMsAbs) &&
+			((_timeline_drag_start_.minTime - _timeline_min_Date_) > offsetMsAbs))
 		{
-			_timeline_min_time_.setTime(_timeline_drag_from_min_time_.getTime() - msOffset);
-			_timeline_max_time_.setTime(_timeline_drag_from_max_time_.getTime() - msOffset);
+			offsetMin -= offsetXMs;
+			offsetMax -= offsetXMs;
+		}
+
+		// go zooming
+		let offsetY = e.screenY - _timeline_drag_start_.y;
+		let offsetYMs = _timeline_drag_start_.timeRange * offsetY / _timeline_svg_width_;
+		console.log(offsetYMs);
+		let timeDiff = _timeline_drag_start_.timeRange / _timeline_day_in_ms_;
+		if ((timeDiff < 250000 * 365) && (timeDiff > 1))
+		{
+			offsetMin -= offsetYMs;
+			offsetMax += offsetYMs;
+		}
+
+		// update change
+		if ((offsetMin != 0) && (offsetMax != 0))
+		{
+			_timeline_min_time_.setTime(_timeline_drag_start_.minTime.getTime() + offsetMin);
+			_timeline_max_time_.setTime(_timeline_drag_start_.maxTime.getTime() + offsetMax);
 			_timeline_this_object_.renderAxisAndGrid();
 		}
 
@@ -164,9 +190,7 @@ class Timeline
 	mouseUpHandler(e)
 	{
 		if (!_timeline_is_dragging_) return;
-		// e.preventDefault();
 
-		// $('#logspan').text('up: ' + e.pointerType);
 		_timeline_is_dragging_ = false;
 		return false;
 	}
