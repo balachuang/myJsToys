@@ -22,17 +22,8 @@
 <script>
 	let timelineObject = null;
 	$(document).ready(function() {
-		setupConfigPanel(updateParameters);
+		setupConfigPanel(null);
 		timelineObject = new Timeline('svg-container');
-		$('#add-period').click(addNewPeriod);
 	});
-	function updateParameters() {
-		// do thing...
-	}
-	function addNewPeriod()
-	{
-		//
-		console.log('add~~~');
-	}
 </script>
 </html>
