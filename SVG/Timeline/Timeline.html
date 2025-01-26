@@ -11,19 +11,67 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
 	<script src="../SvgConfigPanel.js"></script>
 	<script src="timeline/timeline.js"></script>
+	<style>
+		body {
+			background-color: rgb(7, 49, 1);
+		}
+		#control-panel {
+			width: 100%;
+			padding: 0px 40px 0px 20px;
+			box-sizing: border-box;
+		}
+		.page-title {
+			font-family: Calibri;
+			font-size: 2em;
+			margin: 0px 0px;
+		}
+		#help-mark {
+			text-decoration: none;
+			color: lightgray;
+		}
+		#help-image {
+			position: absolute;
+			display: none;
+			z-index: 1000;
+		}
+		#help-image img {
+			display: block;
+			max-width: 594px;
+			max-height: 298px;
+			width: auto;
+			height: auto;
+		}
+	</style>
 </head>
 <!-- <body style="background-color: rgb(36, 37, 38);"> -->
-<body style="background-color: rgb(7, 49, 1);">
-	<span id="control-panel">
-		<span style="font-family: Calibri; font-size: 2em;">My Personal Timeline</span><br/>
-	</span>
+<body>
+	<div id="control-panel">
+		<p class="page-title" style="float:left;">My Timeline</p>
+		<p class="page-title" style="float:right;">
+			<a id="help-mark" href="#">(?)</a>
+		</p>
+		<br/>
+	</div>
+	<div id="help-image"><img src="help.png"></div>
 	<div id="svg-container" />
 </body>
 <script>
 	let timelineObject = null;
 	$(document).ready(function() {
+		$('#help-mark').click(showHelp);
 		setupConfigPanel(null);
 		timelineObject = new Timeline('svg-container');
 	});
+	function showHelp()
+	{
+		let w = $(document).width();
+		let h = window.innerHeight;
+		$('#help-image').css({
+			left: w/2 - $('#help-image').width() / 2,
+			top: h / 2 - $('#help-image').height() / 2
+		});
+		$('#help-image').show();
+		$('#help-image').click(function(){ $('#help-image').hide(); });
+	}
 </script>
 </html>
