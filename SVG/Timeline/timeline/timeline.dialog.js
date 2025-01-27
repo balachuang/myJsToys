@@ -3,25 +3,19 @@
 
 let _timeline_dialog_ = null;
 const _timeline_dialog_html_ =
-	'<dialog id="_timeline_period_dialog_" class="timeline-dialog">                                  ' +
-	'  <p class="timeline-dialog-title">Period Detail</p>                                            ' +
-	'  <form method="dialog">                                                                        ' +
-	'    <label for="pname">Name</label><br/>                                                        ' +
-	'    <input type="text" id="pname" name="pname" value="">                                        ' +
-	'    <label for="pdesc">Description</label><br/>                                                 ' +
-	'    <input type="text" id="pdesc" name="pdesc" value="">                                        ' +
-	'    <label for="psdate">Start Time</label><br/>                                                 ' +
-	'    <input type="date" id="psdate" name="psdate" value="" style="width:47%;">                   ' +
-	'    <input type="time" id="pstime" name="pstime" value="" style="width:47%; margin-left:3px;">  ' +
-	'    <label for="pedate">End Time</label><br/>                                                   ' +
-	'    <input type="date" id="pedate" name="pedate" value="" style="width:47%;">                   ' +
-	'    <input type="time" id="petime" name="petime" value="" style="width:47%; margin-left:3px;">  ' +
-	'    <br/><br/>                                                                                  ' +
-	// '    <button id="_timeline_period_dialog_del_btn_" style="float: left;">Delete</button>          ' +
-	// '    <button id="_timeline_period_dialog_upt_btn_" >Update Period</button>                       ' +
-	'    <button id="_timeline_period_dialog_cnl_btn_" (click)="closeDialog()">OK</button>           ' +
-	'  </form>                                                                                       ' +
-	'</dialog>                                                                                       ' ;
+	'<dialog id="_timeline_period_dialog_" class="timeline-dialog">                        ' +
+	'  <p class="timeline-dialog-title">Event Information</p>                              ' +
+	'  <form method="dialog">                                                              ' +
+	'    <label>Name</label>                                                               ' +
+	'    <input type="text" id="pname" name="pname" value="" readonly>                          ' +
+	'    <label>Time</label><br/>                                                          ' +
+	'    <input type="text" id="psdate" name="psdate" value="" style="width:45%" readonly>      ' +
+	'    ~                                                                                 ' +
+	'    <input type="text" id="pedate" name="pedate" value="" style="width:45%" readonly>      ' +
+	'    <br/><br/>                                                                        ' +
+	'    <button id="_timeline_period_dialog_cnl_btn_" (click)="closeDialog()">OK</button> ' +
+	'  </form>                                                                             ' +
+	'</dialog>                                                                             ' ;
 
 
 class TimelineDialog
@@ -46,11 +40,11 @@ class TimelineDialog
 
 		// get period information
 		$('#pname').val(periodInfo.name);
-		$('#pdesc').val(periodInfo.description);
+		// $('#pdesc').val(periodInfo.description);
 		$('#psdate').val(this.getDateString(periodInfo.start));
 		$('#pedate').val(this.getDateString(periodInfo.end));
-		$('#pstime').val(this.getTimeString(periodInfo.start));
-		$('#petime').val(this.getTimeString(periodInfo.end));
+		// $('#pstime').val(this.getTimeString(periodInfo.start));
+		// $('#petime').val(this.getTimeString(periodInfo.end));
 		// document.getElementById(psdate).valueAsDate = this.getDateString(periodInfo.start);
 		// document.getElementById(pedate).valueAsDate = this.getDateString(periodInfo.end);
 

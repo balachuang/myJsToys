@@ -80,11 +80,12 @@ dialog.timeline-dialog input {
 	height: 2em;
 	border: 1px solid gray;
 	border-radius: 5px;
-	background-color: rgb(120, 120, 120);
+	background-color: rgb(80, 80, 80);
 	font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 	font-size: 1em;
 	color: white;
 	margin-bottom: 1em;
+	text-align: center;
 }
 
 dialog.timeline-dialog button {
