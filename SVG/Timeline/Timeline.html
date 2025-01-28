@@ -58,8 +58,12 @@
 <script>
 	let timelineObject = null;
 	$(document).ready(function() {
+		resizeTimeline();
 		$('#help-mark').click(showHelp);
-		setupConfigPanel(null);
+		$(window).on('resize', ()=>{
+			resizeTimeline();
+			updateTimeline();
+		});
 		timelineObject = new Timeline('svg-container');
 	});
 	function showHelp()
@@ -78,6 +82,22 @@
 		});
 		$('#help-image').show();
 		$('#help-image').click(function(){ $('#help-image').hide(); });
+	}
+	function resizeTimeline()
+	{
+		let svgTop = $('#control-panel').position().top + $('#control-panel').height() + svhMargin;
+		let svgWidth = $(document).width() - svhMargin * 2;
+		let svgHeight = window.innerHeight - svhMargin - svgTop - 20;
+		$('#svg-container').css({
+			'top': svgTop,
+			'left': svhMargin,
+			'width': svgWidth,
+			'height': svgHeight
+		});
+	}
+	function updateTimeline()
+	{
+		window.setTimeout(()=>{ timelineObject.initializeTimeline(); }, 200);
 	}
 </script>
 </html>

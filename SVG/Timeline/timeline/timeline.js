@@ -114,24 +114,26 @@ class Timeline
 
 		// create axis of timeline
 		this.renderAxisAndGrid();
+
+		$(window).on('rezie', resizeTimeline);
 	}
 
 	// 處理 SVG mouse 事件
-	clickSvgHandler(e)
-	{
-		// click on timeline, add new period
-		let timeScale = 0.1 * (_timeline_max_time_ - _timeline_min_time_);
-		let periodStart = new Date();
-		let periodEnd = new Date();
-		periodStart.setTime(_timeline_min_time_.getTime() + timeScale);
-		periodEnd.setTime(_timeline_max_time_.getTime() - timeScale);
+	// clickSvgHandler(e)
+	// {
+	// 	// click on timeline, add new period
+	// 	let timeScale = 0.1 * (_timeline_max_time_ - _timeline_min_time_);
+	// 	let periodStart = new Date();
+	// 	let periodEnd = new Date();
+	// 	periodStart.setTime(_timeline_min_time_.getTime() + timeScale);
+	// 	periodEnd.setTime(_timeline_max_time_.getTime() - timeScale);
 
-		// add new period
-		if (_timeline_this_object_.periodObj == null) _timeline_this_object_.periodObj = new TimelinePeriod();
-		_timeline_this_object_.periodObj.addPeriod('New Period', 'Descripton', periodStart, periodEnd);
+	// 	// add new period
+	// 	if (_timeline_this_object_.periodObj == null) _timeline_this_object_.periodObj = new TimelinePeriod();
+	// 	_timeline_this_object_.periodObj.addPeriod('New Period', 'Descripton', periodStart, periodEnd);
 
-		_timeline_this_object_.renderTimeline();
-	}
+	// 	_timeline_this_object_.renderTimeline();
+	// }
 
 	mouseDnHandler(e)
 	{
