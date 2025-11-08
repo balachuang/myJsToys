@@ -1,0 +1,25 @@
+body {
+  background-color: rgb(36, 37, 38);
+  color: white;
+}
+
+#geoDiv {
+  padding: 10px;
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  margin-top: 0px;
+}
+
+#geoArea {
+  border: 1px solid darkgray;
+  display: block;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+#geoArea line {
+	stroke: rgba(255, 255, 255, 1.0);
+	fill: none;
+}
