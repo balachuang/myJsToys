@@ -3,12 +3,23 @@ body {
   color: white;
 }
 
+#config-panel {
+	font-family: 'Caveat', cursive;
+	font-size: 14px;
+	position: fixed;
+	top: 10px;
+	left: 20px;
+	color: lightgray;
+	background: none;
+	z-index: 100;
+}
+
 #bezierDiv {
   padding: 10px;
   display: block;
   box-sizing: border-box;
   width: 100%;
-  margin-top: 0px;
+  margin-top: 30px;
 }
 
 #bezierArea {
@@ -19,7 +30,34 @@ body {
   box-sizing: border-box;
 }
 
-/* #bezierArea line {
-	stroke: rgba(255, 255, 255, 1.0);
-	fill: none;
-} */
+.bezier-curve {
+  fill: none;
+  stroke: yellow;
+  stroke-width: 3;
+}
+
+.ctrl-line {
+  fill: none;
+  stroke: darkgray;
+  stroke-width: 1;
+  stroke-dasharray: 5,5;
+}
+
+.ctrl-point {
+  stroke: white;
+  stroke-width: 1;
+  r: 7;
+}
+
+.cp-mid {
+  fill: rgb(36, 37, 38);
+}
+
+.cp-end {
+  fill: white
+}
+
+.cp-end.smooth {
+  fill: yellow;
+  r: 5;
+}

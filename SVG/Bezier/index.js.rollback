@@ -11,7 +11,7 @@ class Point2
 
 // initialization
 var ctrlPoints = new Array(0);
-var clickRange = 15;
+var cpRadius = 7;
 var moveIdx = -1;
 var mouseStartPoiint;
 
@@ -23,6 +23,7 @@ function initDocuemnt()
 	$('#bezierDiv').on('mousedown', onMouseDown);
 	$('#bezierDiv').on('mousemove', onMouseMove);
 	$('#bezierDiv').on('mouseup', onMouseUp);
+	// $('#bezierDiv').on('dbclick', onDbClick);
 	$('#new-curve').on('click', onClickAddCurve);
 
 	// initialize Canvas
@@ -33,7 +34,7 @@ function initDocuemnt()
 
 	// init control points and svg objects
 	createSvgObjects();
-	updateBezierSvg(0, 0);
+	updateBezierSvg(0, 0, false);
 }
 
 function onMouseDown(e)
@@ -48,7 +49,7 @@ function onMouseDown(e)
 	for (let n=0; n<ctrlPoints.length; ++n)
 	{
 		let dis = Math.sqrt((ctrlPoints[n].x - clickPoint.x)**2 + (ctrlPoints[n].y - clickPoint.y)**2);
-		if (dis <= clickRange) {
+		if (dis <= cpRadius * 2) {
 			moveIdx = n;
 			break;
 		}
@@ -61,7 +62,7 @@ function onMouseMove(e)
 	{
 		let xDiff = e.offsetX - mouseStartPoiint.x;
 		let yDiff = e.offsetY - mouseStartPoiint.y;
-		updateBezierSvg(xDiff, yDiff);
+		updateBezierSvg(xDiff, yDiff, false);
 	}
 }
 
@@ -95,12 +96,12 @@ function onMouseUp(e)
 			}
 		}else{
 			// move control point
-			ctrlPoints[moveIdx].x = mouseStartPoiint.x + xDiff;
-			ctrlPoints[moveIdx].y = mouseStartPoiint.y + yDiff;
+			ctrlPoints[moveIdx].x += xDiff;
+			ctrlPoints[moveIdx].y += yDiff;
 		}
 
 		moveIdx = -1;
-		updateBezierSvg(0, 0);
+		updateBezierSvg(0, 0, true);
 	}
 }
 
@@ -108,80 +109,124 @@ function onMouseUp(e)
 function onClickAddCurve()
 {
 	createSvgObjects();
-	updateBezierSvg(0, 0);
+	updateBezierSvg(0, 0, false);
 }
 
-function updateBezierSvg(xDiff, yDiff)
+function updateBezierSvg(xDiff, yDiff, isUpdateBack)
 {
+	// 不能直接 tempCtPts[n] = ctrlPoints[n], 會變成 reference, 改一個動到兩個
+	let tempCtPts = [];
+	for (let n=0; n<ctrlPoints.length; ++n) tempCtPts[n] = {x:ctrlPoints[n].x, y: ctrlPoints[n].y};
+
 	if (moveIdx >= 0)
 	{
-		// 目前正在移動控制點, 先檢查是否有影響到 smooth 點
-		let isNeedUpdatePrevPoint = (moveIdx > 1) && $(`#ctrl-point-${moveIdx - 1}`).hasClass('smooth');
-		let isNeedUpdateNextPoint = (moveIdx < ctrlPoints.length-2) && $(`#ctrl-point-${moveIdx + 1}`).hasClass('smooth');
-		let isNeedUpdateBothPoint = (moveIdx > 0) && (moveIdx < ctrlPoints.length-1) && $(`#ctrl-point-${moveIdx}`).hasClass('smooth');
+		// 目前正在移動控制點
+		tempCtPts[moveIdx].x += xDiff;
+		tempCtPts[moveIdx].y += yDiff;
 
-		// move this control point
-		if (isNeedUpdateBothPoint)
-		{
-			// move smooth point itself, move both prev- and next- control points
-			let xLocalDiff = mouseStartPoiint.x + xDiff - ctrlPoints[moveIdx].x;
-			let yLocalDiff = mouseStartPoiint.y + yDiff - ctrlPoints[moveIdx].y;
-			ctrlPoints[moveIdx - 1].x += xLocalDiff;
-			ctrlPoints[moveIdx - 1].y += yLocalDiff;
-			ctrlPoints[moveIdx + 1].x += xLocalDiff;
-			ctrlPoints[moveIdx + 1].y += yLocalDiff;
-		}
-		ctrlPoints[moveIdx].x = mouseStartPoiint.x + xDiff;
-		ctrlPoints[moveIdx].y = mouseStartPoiint.y + yDiff;
+		let isNeedUpdatePrevPoint = (moveIdx > 1) && $(`#ctrl-point-${moveIdx - 1}`).hasClass('smooth');
+		let isNeedUpdateNextPoint = (moveIdx < tempCtPts.length-2) && $(`#ctrl-point-${moveIdx + 1}`).hasClass('smooth');
 
 		// check is smooth mode
 		if (isNeedUpdatePrevPoint)
 		{
 			// prev. point is smooth, update prev^2 point
-			let xDir = ctrlPoints[moveIdx - 2].x - ctrlPoints[moveIdx - 1].x;
-			let yDir = ctrlPoints[moveIdx - 2].y - ctrlPoints[moveIdx - 1].y;
+			let xDir = tempCtPts[moveIdx - 2].x - tempCtPts[moveIdx - 1].x;
+			let yDir = tempCtPts[moveIdx - 2].y - tempCtPts[moveIdx - 1].y;
 			let orglen = Math.sqrt(xDir*xDir + yDir*yDir);
-			xDir = ctrlPoints[moveIdx - 1].x - ctrlPoints[moveIdx].x;
-			yDir = ctrlPoints[moveIdx - 1].y - ctrlPoints[moveIdx].y;
+			xDir = tempCtPts[moveIdx - 1].x - tempCtPts[moveIdx].x;
+			yDir = tempCtPts[moveIdx - 1].y - tempCtPts[moveIdx].y;
 			let len = Math.sqrt(xDir*xDir + yDir*yDir);
-			ctrlPoints[moveIdx - 2].x = ctrlPoints[moveIdx - 1].x + orglen * xDir / len;
-			ctrlPoints[moveIdx - 2].y = ctrlPoints[moveIdx - 1].y + orglen * yDir / len;
+			tempCtPts[moveIdx - 2].x = tempCtPts[moveIdx - 1].x + orglen * xDir / len;
+			tempCtPts[moveIdx - 2].y = tempCtPts[moveIdx - 1].y + orglen * yDir / len;
 		}
 		if (isNeedUpdateNextPoint)
 		{
 			// next point is smooth, update next^2 point
-			let xDir = ctrlPoints[moveIdx + 2].x - ctrlPoints[moveIdx + 1].x;
-			let yDir = ctrlPoints[moveIdx + 2].y - ctrlPoints[moveIdx + 1].y;
+			console.log('update: ' + (moveIdx + 2));
+			let xDir = tempCtPts[moveIdx + 2].x - tempCtPts[moveIdx + 1].x;
+			let yDir = tempCtPts[moveIdx + 2].y - tempCtPts[moveIdx + 1].y;
 			let orglen = Math.sqrt(xDir*xDir + yDir*yDir);
-			xDir = ctrlPoints[moveIdx + 1].x - ctrlPoints[moveIdx].x;
-			yDir = ctrlPoints[moveIdx + 1].y - ctrlPoints[moveIdx].y;
+			xDir = tempCtPts[moveIdx + 1].x - tempCtPts[moveIdx].x;
+			yDir = tempCtPts[moveIdx + 1].y - tempCtPts[moveIdx].y;
 			let len = Math.sqrt(xDir*xDir + yDir*yDir);
-			ctrlPoints[moveIdx + 2].x = ctrlPoints[moveIdx + 1].x + orglen * xDir / len;
-			ctrlPoints[moveIdx + 2].y = ctrlPoints[moveIdx + 1].y + orglen * yDir / len;
+			tempCtPts[moveIdx + 2].x = tempCtPts[moveIdx + 1].x + orglen * xDir / len;
+			tempCtPts[moveIdx + 2].y = tempCtPts[moveIdx + 1].y + orglen * yDir / len;
 		}
+
+	// 	// update bezier curve
+	// 	let bcurveStr = calculateBCurve(tempCtPts);
+	// 	$('#bcurve').attr('points', bcurveStr);
+ 
+	// 	// update all control lines
+	// 	for (n=0; n<tempCtPts.length-1; ++n)
+	// 	{
+	// 		let idStr = `#ctrl-line-${n}-${n+1}`;
+	// 		$(idStr).attr('x1', tempCtPts[n].x);
+	// 		$(idStr).attr('y1', tempCtPts[n].y);
+	// 		$(idStr).attr('x2', tempCtPts[n+1].x);
+	// 		$(idStr).attr('y2', tempCtPts[n+1].y);
+	// 	}
+
+	// 	// update all control poiints
+	// 	for (n=0; n<tempCtPts.length-1; ++n)
+	// 	{
+	// 		let idStr = `#ctrl-point-${n}`;
+	// 		$(idStr).attr('cx', tempCtPts[n].x);
+	// 		$(idStr).attr('cy', tempCtPts[n].y);
+	// 	}
+	// }
+	// else
+	// {
+	// 	// 目前是單純畫圖
+	// 	// bezier curve
+	// 	let bcurveStr = calculateBCurve(tempCtPts);
+	// 	$('#bcurve').attr('points', bcurveStr);
+
+	// 	// control-line
+	// 	for (let n=0; n<ctrlPoints.length-1; ++n)
+	// 	{
+	// 		let idStr = `#ctrl-line-${n}-${n+1}`;
+	// 		$(idStr).attr('x1', tempCtPts[n].x);
+	// 		$(idStr).attr('y1', tempCtPts[n].y);
+	// 		$(idStr).attr('x2', tempCtPts[n+1].x);
+	// 		$(idStr).attr('y2', tempCtPts[n+1].y);
+	// 	}
+
+	// 	// control poiint
+	// 	for (let n=0; n<ctrlPoints.length; ++n)
+	// 	{
+	// 		let idStr = `#ctrl-point-${n}`;
+	// 		$(idStr).attr('cx', tempCtPts[n].x);
+	// 		$(idStr).attr('cy', tempCtPts[n].y);
+	// 	}
 	}
 
-	// 不論有沒有正在移動控制點, 都要 update 一次所有的 SVG Object
 	// update bezier curve
-	let bcurveStr = calculateBCurve(ctrlPoints);
+	let bcurveStr = calculateBCurve(tempCtPts);
 	$('#bcurve').attr('points', bcurveStr);
 
 	// update all control lines
-	for (n=0; n<ctrlPoints.length-1; ++n)
+	for (n=0; n<tempCtPts.length-1; ++n)
 	{
 		let idStr = `#ctrl-line-${n}-${n+1}`;
-		$(idStr).attr('x1', ctrlPoints[n].x);
-		$(idStr).attr('y1', ctrlPoints[n].y);
-		$(idStr).attr('x2', ctrlPoints[n+1].x);
-		$(idStr).attr('y2', ctrlPoints[n+1].y);
+		$(idStr).attr('x1', tempCtPts[n].x);
+		$(idStr).attr('y1', tempCtPts[n].y);
+		$(idStr).attr('x2', tempCtPts[n+1].x);
+		$(idStr).attr('y2', tempCtPts[n+1].y);
 	}
 
 	// update all control poiints
-	for (n=0; n<ctrlPoints.length; ++n)
+	for (n=0; n<tempCtPts.length; ++n)
 	{
 		let idStr = `#ctrl-point-${n}`;
-		$(idStr).attr('cx', ctrlPoints[n].x);
-		$(idStr).attr('cy', ctrlPoints[n].y);
+		$(idStr).attr('cx', tempCtPts[n].x);
+		$(idStr).attr('cy', tempCtPts[n].y);
+	}
+
+	if (isUpdateBack)
+	{
+		for (let n=0; n<tempCtPts.length; ++n) ctrlPoints[n] = {x:tempCtPts[n].x, y: tempCtPts[n].y};
 	}
 }
 
@@ -215,10 +260,10 @@ function createSvgObjects()
 		ctrlPoints.push(new Point2(250, 100));
 		ctrlPoints.push(new Point2(250, 300));
 		ctrlPoints.push(new Point2(400, 200));
-		$('#bcurve-group').append(makeSVG('polyline',   {id: 'bcurve', class: 'bezier-curve'}));
-		$('#ctrl-line-group').append(makeSVG('line',    { id: 'ctrl-line-0-1', class: 'ctrl-line' }));
-		$('#ctrl-line-group').append(makeSVG('line',    { id: 'ctrl-line-1-2', class: 'ctrl-line' }));
-		$('#ctrl-line-group').append(makeSVG('line',    { id: 'ctrl-line-2-3', class: 'ctrl-line' }));
+		$('#bcurve-group').append(makeSVG('polyline', {id: 'bcurve', class: 'bezier-curve'}));
+		$('#ctrl-line-group').append(makeSVG('line',   { id: 'ctrl-line-0-1', class: 'ctrl-line' }));
+		$('#ctrl-line-group').append(makeSVG('line',   { id: 'ctrl-line-1-2', class: 'ctrl-line' }));
+		$('#ctrl-line-group').append(makeSVG('line',   { id: 'ctrl-line-2-3', class: 'ctrl-line' }));
 		$('#ctrl-point-group').append(makeSVG('circle', { id: 'ctrl-point-0', class: 'ctrl-point cp-end' }));
 		$('#ctrl-point-group').append(makeSVG('circle', { id: 'ctrl-point-1', class: 'ctrl-point cp-mid' }));
 		$('#ctrl-point-group').append(makeSVG('circle', { id: 'ctrl-point-2', class: 'ctrl-point cp-mid' }));
@@ -233,9 +278,9 @@ function createSvgObjects()
 		ctrlPoints.push(new Point2(x + xDir/len, y + yDir/len));
 		ctrlPoints.push(new Point2(x + xDir/len + 100, y + yDir/len));
 		ctrlPoints.push(new Point2(x + xDir/len + 200, y + yDir/len));
-		$('#ctrl-line-group').append(makeSVG('line',    { id: `ctrl-line-${cpCount-1}-${cpCount}`, class: 'ctrl-line' }));
-		$('#ctrl-line-group').append(makeSVG('line',    { id: `ctrl-line-${cpCount}-${cpCount+1}`, class: 'ctrl-line' }));
-		$('#ctrl-line-group').append(makeSVG('line',    { id: `ctrl-line-${cpCount+1}-${cpCount+2}`, class: 'ctrl-line' }));
+		$('#ctrl-line-group').append(makeSVG('line',   { id: `ctrl-line-${cpCount-1}-${cpCount}`, class: 'ctrl-line' }));
+		$('#ctrl-line-group').append(makeSVG('line',   { id: `ctrl-line-${cpCount}-${cpCount+1}`, class: 'ctrl-line' }));
+		$('#ctrl-line-group').append(makeSVG('line',   { id: `ctrl-line-${cpCount+1}-${cpCount+2}`, class: 'ctrl-line' }));
 		$('#ctrl-point-group').append(makeSVG('circle', { id: `ctrl-point-${cpCount}`, class: 'ctrl-point cp-mid' }));
 		$('#ctrl-point-group').append(makeSVG('circle', { id: `ctrl-point-${cpCount+1}`, class: 'ctrl-point cp-mid' }));
 		$('#ctrl-point-group').append(makeSVG('circle', { id: `ctrl-point-${cpCount+2}`, class: 'ctrl-point cp-end' }));
